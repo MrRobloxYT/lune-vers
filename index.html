@@ -1,0 +1,715 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Lune &amp; Vers</title>
+<meta name="description" content="Two free Mac menu-bar apps for listening at night: Lune lights the edge of your screen in your album's colours, Vers lights the lyrics word by word.">
+<link rel="icon" href="assets/lune.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,700;1,400&family=Martian+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a record sleeve. A live "screen" opens the page, then Side A (Lune)
+   and Side B (Vers) read as track lists, with install steps and liner notes. */
+:root {
+  --night: #0b0a10;          /* the room */
+  --sleeve: #13111a;         /* raised surfaces */
+  --hairline: #2a2635;
+  --ink: #ece8f2;            /* body text */
+  --dim: #9a93aa;            /* secondary text */
+  --glow: #8b6cff;           /* set by the chosen record */
+  --glow-2: #c7b8ff;
+  --glow-3: #3c2a8a;
+  --display: "Gloock", "Iowan Old Style", "Times New Roman", serif;
+  --body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Martian Mono", "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--night); color: var(--ink);
+  font: 400 17px/1.6 var(--body);
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--glow); color: #0b0a10; }
+a { color: inherit; }
+.wrap {
+  max-width: 1180px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.label { font: 600 11px/1.4 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+h1, h2, h3 { font-family: var(--display); font-weight: 400; margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+p { margin: 0; }
+:focus-visible { outline: 2px solid var(--glow-2); outline-offset: 3px; border-radius: 6px; }
+
+/* ---------- Top bar ---------- */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: color-mix(in srgb, var(--night) 82%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-bottom: 1px solid var(--hairline); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--night); }
+.bar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.mark { display: flex; align-items: center; gap: 10px; text-decoration: none; font-family: var(--display); font-size: 21px; }
+.mark img { width: 26px; height: 26px; }
+.bar nav { display: flex; gap: 22px; align-items: center; }
+.bar nav a { text-decoration: none; color: var(--dim); font-size: 15px; }
+.bar nav a:hover { color: var(--ink); }
+.bar nav a.get { color: var(--night); background: var(--ink); padding: 7px 14px; border-radius: 999px; font-weight: 700; }
+@media (max-width: 720px) { .bar nav a:not(.get) { display: none; } }
+
+/* ---------- Hero ---------- */
+.hero { padding-block: 56px 30px; display: grid; gap: 34px; }
+.hero-head { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: end; }
+.hero h1 { font-size: clamp(54px, 9vw, 128px); line-height: .9; }
+.hero h1 .amp { font-style: italic; color: var(--glow-2); text-shadow: 0 0 34px color-mix(in srgb, var(--glow) 70%, transparent); transition: color .6s, text-shadow .6s; }
+.hero .lede { font-size: 19px; color: var(--ink); max-width: 46ch; }
+.hero .lede em { color: var(--dim); font-style: normal; }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 22px; }
+.btn { display: inline-flex; align-items: center; gap: 10px; padding: 13px 20px; border-radius: 14px; text-decoration: none; font-weight: 700; font-size: 16px; border: 1px solid var(--hairline); background: var(--sleeve); color: var(--ink); transition: border-color .3s, transform .15s; }
+.btn:hover { border-color: var(--glow); transform: translateY(-1px); }
+.btn.primary { background: var(--ink); color: var(--night); border-color: var(--ink); }
+.btn small { font: 400 11px var(--mono); color: inherit; opacity: .7; }
+@media (max-width: 860px) { .hero-head { grid-template-columns: 1fr; gap: 20px; } }
+
+/* The demo screen: a MacBook display with a notch. */
+.stage { display: grid; gap: 16px; }
+.laptop { position: relative; max-width: 100%; aspect-ratio: 1512 / 982; border-radius: 22px; background: #050407; border: 10px solid #1a1820; box-shadow: 0 40px 120px -40px color-mix(in srgb, var(--glow) 55%, transparent), 0 0 0 1px #2d2a36; overflow: hidden; transition: box-shadow .8s; }
+.laptop canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.laptop .notch { position: absolute; left: 50%; top: 0; width: 12.2%; height: 3.3%; transform: translateX(-50%); background: #050407; border-radius: 0 0 10px 10px; z-index: 2; }
+.screen-caption { position: absolute; left: 14px; bottom: 12px; z-index: 3; font: 400 11px var(--mono); color: color-mix(in srgb, var(--ink) 55%, transparent); }
+.controls { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; }
+.controls .label { white-space: nowrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 500 14px var(--body); color: var(--dim); background: transparent; border: 1px solid var(--hairline); border-radius: 999px; padding: 6px 13px; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
+.chip:hover { color: var(--ink); }
+.chip[aria-pressed="true"] { color: var(--night); background: var(--glow-2); border-color: var(--glow-2); }
+@media (max-width: 600px) { .controls { grid-template-columns: 1fr; gap: 6px; } .controls .chips { margin-bottom: 8px; } }
+
+/* ---------- Records (colour picker) ---------- */
+.records { padding-block: 40px 20px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 36px; align-items: center; border-top: 1px solid var(--hairline); }
+.records h2 { font-size: clamp(30px, 4vw, 44px); line-height: 1.05; }
+.records p { color: var(--dim); margin-top: 12px; max-width: 42ch; }
+.crate { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.record { appearance: none; border: 0; padding: 0; background: none; cursor: pointer; text-align: left; color: var(--dim); display: grid; gap: 8px; font: 400 12px var(--mono); }
+.record .cover { aspect-ratio: 1; border-radius: 6px; box-shadow: 0 10px 30px -12px #000; position: relative; overflow: hidden; transition: transform .25s; }
+.record .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, #ffffff22, transparent 40%); }
+.record:hover .cover { transform: translateY(-3px) rotate(-1deg); }
+.record[aria-pressed="true"] { color: var(--ink); }
+.record[aria-pressed="true"] .cover { outline: 2px solid var(--ink); outline-offset: 3px; }
+@media (max-width: 860px) { .records { grid-template-columns: 1fr; } .crate { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+/* ---------- Sides (track lists) ---------- */
+.side { padding-block: 70px 30px; border-top: 1px solid var(--hairline); display: grid; grid-template-columns: 300px 1fr; gap: 48px; }
+.side-head { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 80px); align-self: start; display: grid; gap: 14px; }
+.side-head img { width: 84px; height: 84px; }
+.side-head h2 { font-size: 56px; line-height: .95; }
+.side-head p { color: var(--dim); }
+.tracks { list-style: none; margin: 0; padding: 0; display: grid; }
+.track { display: grid; grid-template-columns: 54px 1fr auto; gap: 18px; padding-block: 22px; border-bottom: 1px solid var(--hairline); align-items: baseline; }
+.track .no { font: 600 13px var(--mono); color: var(--glow-2); }
+.track h3 { font-size: 27px; line-height: 1.15; }
+.track p { color: var(--dim); margin-top: 8px; max-width: 62ch; }
+.track .time { font: 400 12px var(--mono); color: var(--dim); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.track .modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 24px; margin-top: 14px; }
+.track .modes div { min-width: 0; }
+.track .modes b { display: block; font-weight: 700; color: var(--ink); font-size: 15px; }
+.track .modes span { color: var(--dim); font-size: 15px; }
+.styles-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.styles-grid span { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-radius: 6px; padding: 4px 8px; color: var(--ink); }
+.note { margin-top: 26px; padding: 16px 18px; border-left: 2px solid var(--glow); background: var(--sleeve); border-radius: 0 10px 10px 0; color: var(--dim); font-size: 15px; }
+.note b { color: var(--ink); }
+@media (max-width: 860px) { .side { grid-template-columns: 1fr; gap: 20px; } .side-head { position: static; } .track { grid-template-columns: 40px 1fr; } .track .time { grid-column: 2; } .track .modes { grid-template-columns: 1fr; } }
+
+/* ---------- Together ---------- */
+.together { padding-block: 70px; border-top: 1px solid var(--hairline); display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+.together h2 { font-size: clamp(34px, 4.6vw, 54px); line-height: 1.02; }
+.together p { color: var(--dim); margin-top: 14px; max-width: 48ch; }
+.layers { display: grid; gap: 10px; font: 400 13px var(--mono); }
+.layer { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; border: 1px solid var(--hairline); border-radius: 10px; background: var(--sleeve); }
+.layer span:last-child { color: var(--dim); text-align: right; }
+.layer.top { border-color: var(--glow); box-shadow: inset 0 0 24px -8px var(--glow); }
+@media (max-width: 860px) { .together { grid-template-columns: 1fr; } }
+
+/* ---------- Install ---------- */
+.install { padding-block: 70px; border-top: 1px solid var(--hairline); }
+.install h2 { font-size: clamp(34px, 4.6vw, 54px); }
+.steps { list-style: none; padding: 0; margin: 30px 0 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; counter-reset: s; }
+.steps li { counter-increment: s; padding-top: 16px; border-top: 1px solid var(--glow); min-width: 0; }
+.steps li::before { content: counter(s); font: 400 34px var(--display); color: var(--glow-2); display: block; margin-bottom: 6px; }
+.steps b { display: block; }
+.steps span { color: var(--dim); font-size: 15px; }
+kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bottom-width: 2px; border-radius: 4px; padding: 1px 5px; color: var(--ink); }
+@media (max-width: 960px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .steps { grid-template-columns: 1fr; } }
+
+/* ---------- Downloads ---------- */
+.downloads { padding-block: 70px; border-top: 1px solid var(--hairline); display: grid; gap: 28px; }
+.downloads h2 { font-size: clamp(34px, 4.6vw, 54px); }
+.dl-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.dl { display: grid; grid-template-columns: 76px 1fr; gap: 18px; padding: 22px; border: 1px solid var(--hairline); border-radius: 18px; background: var(--sleeve); min-width: 0; }
+.dl img { width: 76px; height: 76px; }
+.dl h3 { font-size: 30px; }
+.dl dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 10px 0 16px; font: 400 12px var(--mono); color: var(--dim); }
+.dl dd { margin: 0; color: var(--ink); min-width: 0; overflow-wrap: anywhere; }
+.dl .hash { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.dl .hash code { overflow-wrap: anywhere; font-size: 11px; }
+.copy { font: 600 10px var(--mono); text-transform: uppercase; letter-spacing: .1em; background: none; border: 1px solid var(--hairline); color: var(--dim); border-radius: 6px; padding: 3px 7px; cursor: pointer; flex: none; }
+.copy:hover { color: var(--ink); }
+@media (max-width: 860px) { .dl-row { grid-template-columns: 1fr; } }
+@media (max-width: 420px) { .dl { grid-template-columns: 1fr; } }
+
+/* ---------- FAQ ---------- */
+.faq { padding-block: 70px; border-top: 1px solid var(--hairline); display: grid; grid-template-columns: 300px 1fr; gap: 48px; }
+.faq h2 { font-size: clamp(34px, 4.6vw, 54px); }
+.faq details { border-bottom: 1px solid var(--hairline); padding-block: 18px; }
+.faq summary { cursor: pointer; font-weight: 700; font-size: 18px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; font: 400 20px var(--mono); color: var(--glow-2); }
+.faq details[open] summary::after { content: "–"; }
+.faq details p { color: var(--dim); margin-top: 10px; max-width: 64ch; }
+@media (max-width: 860px) { .faq { grid-template-columns: 1fr; gap: 16px; } }
+
+/* ---------- Liner notes ---------- */
+.liner { border-top: 1px solid var(--hairline); padding-block: 40px 60px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; font-size: 14px; color: var(--dim); }
+.liner b { display: block; color: var(--ink); font-weight: 500; margin-top: 4px; }
+@media (max-width: 760px) { .liner { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="mark" href="#top"><img src="assets/lune.png" alt="">Lune &amp; Vers</a>
+    <nav aria-label="Sections">
+      <a href="#lune">Lune</a>
+      <a href="#vers">Vers</a>
+      <a href="#install">Install</a>
+      <a href="#faq">FAQ</a>
+      <a class="get" href="#download">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="wrap hero" aria-labelledby="title">
+    <div class="hero-head">
+      <h1 id="title">Lune <span class="amp">&amp;</span><br>Vers</h1>
+      <div>
+        <p class="lede">Two free menu-bar apps for listening at night. <strong>Lune</strong> lights the edge of your screen in the colours of the album that’s playing. <strong>Vers</strong> lights the lyrics, one word at a time, the moment each word is sung. <em>Spotify or Apple Music. macOS 14 or later.</em></p>
+        <div class="cta">
+          <a class="btn primary" href="downloads/Lune-1.0.dmg" download>Get Lune <small>1.0 MB</small></a>
+          <a class="btn" href="downloads/Vers-1.0.dmg" download>Get Vers <small>0.9 MB</small></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="laptop" id="laptop">
+        <canvas id="screen" aria-label="Live demo of Lune's edge light and Vers's lyrics"></canvas>
+        <div class="notch" aria-hidden="true"></div>
+        <div class="screen-caption" id="caption">Lune · Default — Vers · Constellation</div>
+      </div>
+      <div class="controls">
+        <span class="label" id="l-light">Lune light</span>
+        <div class="chips" role="group" aria-labelledby="l-light" id="modes"></div>
+        <span class="label" id="l-style">Vers style</span>
+        <div class="chips" role="group" aria-labelledby="l-style" id="styles"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap records" aria-labelledby="rec-title">
+    <div>
+      <h2 id="rec-title">Put a record on.</h2>
+      <p>Both apps read the cover of whatever is playing and take its colours. Pick a sleeve and watch the screen, and this page, change with it.</p>
+    </div>
+    <div class="crate" id="crate" role="group" aria-label="Example album colours"></div>
+  </section>
+
+  <section class="wrap side" id="lune" aria-labelledby="a-title">
+    <div class="side-head">
+      <span class="label">Side A</span>
+      <img src="assets/lune.png" alt="Lune app icon">
+      <h2 id="a-title">Lune</h2>
+      <p>Light that runs around the edge of your screen and moves with the song.</p>
+    </div>
+    <div>
+      <ol class="tracks">
+        <li class="track">
+          <span class="no">A1</span>
+          <div>
+            <h3>Four ways for the light to move</h3>
+            <div class="modes">
+              <div><b>Default</b><span>Bright stretches drift around the edge while the rest thins to a faint line.</span></div>
+              <div><b>Music Sync</b><span>Listens to your Mac’s audio. The light swells and fills in on every kick drum.</span></div>
+              <div><b>Idle</b><span>A slow, soft drift that keeps most of the edge lit.</span></div>
+              <div><b>No Animation</b><span>One steady glow, for when you just want the light.</span></div>
+            </div>
+          </div>
+          <span class="time">4 modes</span>
+        </li>
+        <li class="track">
+          <span class="no">A2</span>
+          <div><h3>Coloured by the album</h3><p>Lune pulls the strongest one, two or three colours from the cover and fades between songs. Prefer your own? Set a primary, secondary and third colour on the colour wheels.</p></div>
+          <span class="time">1–3 colours</span>
+        </li>
+        <li class="track">
+          <span class="no">A3</span>
+          <div><h3>Around the notch</h3><p>The light dips round the camera notch. If you use boringNotch, Lune follows its outline as it widens for the song or opens on hover.</p></div>
+          <span class="time">live outline</span>
+        </li>
+        <li class="track">
+          <span class="no">A4</span>
+          <div><h3>Only while music plays</h3><p>Press play and the edge fades in. Pause and it fades out. You can keep it on all the time if you like.</p></div>
+          <span class="time">0.35 s fade</span>
+        </li>
+        <li class="track">
+          <span class="no">A5</span>
+          <div><h3>Thickness and glow</h3><p>From a hairline along the bezel to a broad band that washes the whole desk. Two sliders, set once.</p></div>
+          <span class="time">1–18 pt band</span>
+        </li>
+        <li class="track">
+          <span class="no">A6</span>
+          <div><h3>Easy on your Mac</h3><p>Drawn on the GPU in Metal, timed to your display. It holds 60 frames a second at around 3% CPU on an M1.</p></div>
+          <span class="time">60 fps</span>
+        </li>
+      </ol>
+      <p class="note"><b>Permission:</b> Music Sync and notch tracking need <b>Screen &amp; System Audio Recording</b> in System Settings → Privacy &amp; Security. Lune analyses the sound live and never records it, never uploads it and never uses your microphone.</p>
+    </div>
+  </section>
+
+  <section class="wrap side" id="vers" aria-labelledby="b-title">
+    <div class="side-head">
+      <span class="label">Side B</span>
+      <img src="assets/vers.png" alt="Vers app icon">
+      <h2 id="b-title">Vers</h2>
+      <p>Lyrics that light up word by word, right on your desktop.</p>
+    </div>
+    <div>
+      <ol class="tracks">
+        <li class="track">
+          <span class="no">B1</span>
+          <div>
+            <h3>Nine ways to read a song</h3>
+            <p>The timing underneath never changes, only the way the words arrive. Switch from the menu bar mid-song.</p>
+            <div class="styles-grid"><span>Ship</span><span>Fisheye</span><span>Visual</span><span>Fisheye Visual</span><span>Codestyle</span><span>Codestyle Visual</span><span>Branches</span><span>Web</span><span>Constellation</span></div>
+          </div>
+          <span class="time">9 styles</span>
+        </li>
+        <li class="track">
+          <span class="no">B2</span>
+          <div><h3>Auto picks the style</h3><p>Fast, dense verses get the punchy styles. Slow songs get the airy ones. The same song always looks the same.</p></div>
+          <span class="time">per song</span>
+        </li>
+        <li class="track">
+          <span class="no">B3</span>
+          <div><h3>Every word on time</h3><p>Synced lyrics come from LRCLIB. When a song is only timed line by line, Vers spaces the words by their syllables so they still land with the singer.</p></div>
+          <span class="time">word timing</span>
+        </li>
+        <li class="track">
+          <span class="no">B4</span>
+          <div><h3>Icons beside the words</h3><p>The Visual styles drop a matching SF Symbol next to words it knows: a heart, a car, the moon.</p></div>
+          <span class="time">702 words</span>
+        </li>
+        <li class="track">
+          <span class="no">B5</span>
+          <div><h3>Your type, your colours</h3><p>Seven typefaces, a size slider, and three colours: lyric, highlight and secondary. Auto Sync takes them from the album cover.</p></div>
+          <span class="time">7 fonts</span>
+        </li>
+        <li class="track">
+          <span class="no">B6</span>
+          <div><h3>Lights down</h3><p>A black background fades in behind the words while the song plays and out when you pause. Vers keeps the display awake so the lyrics never dim mid-song.</p></div>
+          <span class="time">black stage</span>
+        </li>
+      </ol>
+      <p class="note"><b>Permission:</b> the first time a song plays, macOS asks to let Vers read <b>Spotify</b> or <b>Music</b>. That’s how it knows the song and where you are in it.</p>
+    </div>
+  </section>
+
+  <section class="wrap together" aria-labelledby="t-title">
+    <div>
+      <span class="label">Both sides</span>
+      <h2 id="t-title" style="margin-top:10px">Better as a pair.</h2>
+      <p>Run them together and Vers dims the room to black while Lune draws the light on top, both taking the same colours from the same cover. It’s the setup from those late-night desk videos, on your own Mac.</p>
+    </div>
+    <div class="layers" aria-label="How the two apps stack on screen">
+      <div class="layer top"><span>Lune</span><span>edge light, on top</span></div>
+      <div class="layer"><span>Vers</span><span>words on a black stage</span></div>
+      <div class="layer"><span>Your apps</span><span>underneath, untouched</span></div>
+    </div>
+  </section>
+
+  <section class="wrap install" id="install" aria-labelledby="i-title">
+    <h2 id="i-title">Set up in a minute</h2>
+    <ol class="steps">
+      <li><b>Download</b><span>Grab the .dmg for one app or both.</span></li>
+      <li><b>Drag to Applications</b><span>Open the .dmg and drop the app on the Applications folder.</span></li>
+      <li><b>Open it the first time</b><span>Right-click the app and choose <b>Open</b>, then <b>Open</b> again. It’s free and self-signed, so macOS asks once.</span></li>
+      <li><b>Allow access</b><span>Vers asks to read Spotify or Music. Lune asks for audio when you turn on Music Sync.</span></li>
+      <li><b>Press play</b><span>Both live in the menu bar. There’s no window to manage.</span></li>
+    </ol>
+  </section>
+
+  <section class="wrap downloads" id="download" aria-labelledby="d-title">
+    <h2 id="d-title">Download</h2>
+    <div class="dl-row">
+      <article class="dl">
+        <img src="assets/lune.png" alt="">
+        <div style="min-width:0">
+          <h3>Lune 1.0</h3>
+          <dl>
+            <dt>File</dt><dd>Lune-1.0.dmg · 1.0 MB</dd>
+            <dt>Needs</dt><dd>macOS 14 Sonoma or later · Apple silicon</dd>
+            <dt>SHA-256</dt><dd class="hash"><code id="h-lune">4dbecac27bfcda7625abe2cf0b2c210862a97ffb82d6791ee3dbaf04944d90d5</code><button class="copy" type="button" data-copy="h-lune">Copy</button></dd>
+          </dl>
+          <a class="btn primary" href="downloads/Lune-1.0.dmg" download>Download Lune</a>
+        </div>
+      </article>
+      <article class="dl">
+        <img src="assets/vers.png" alt="">
+        <div style="min-width:0">
+          <h3>Vers 1.0</h3>
+          <dl>
+            <dt>File</dt><dd>Vers-1.0.dmg · 0.9 MB</dd>
+            <dt>Needs</dt><dd>macOS 14 Sonoma or later · Apple silicon</dd>
+            <dt>SHA-256</dt><dd class="hash"><code id="h-vers">99cf4e09f0fd39e1b5094f32c705cbd1c4b35095342e967cfda0e218e72687ae</code><button class="copy" type="button" data-copy="h-vers">Copy</button></dd>
+          </dl>
+          <a class="btn primary" href="downloads/Vers-1.0.dmg" download>Download Vers</a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="wrap faq" id="faq" aria-labelledby="f-title">
+    <h2 id="f-title">Questions</h2>
+    <div>
+      <details><summary>Do they cost anything?</summary><p>No. Both apps are free, with no account and nothing to sign in to.</p></details>
+      <details><summary>Which music apps work?</summary><p>Spotify and Apple Music. Start a song and both apps notice on their own; there’s no Connect button.</p></details>
+      <details><summary>Do the lyrics show on the lock screen?</summary><p>No. Vers shows lyrics on your desktop and over full-screen apps while you’re signed in. Drawing on the macOS lock screen needs private system access, so we left it out.</p></details>
+      <details><summary>Does every song have lyrics?</summary><p>Most popular songs do. Vers finds them on LRCLIB, a free lyrics library, and also tries the plain song title for tracks like “Song (feat. Someone) – Remix”. If nothing is found, the menu says so.</p></details>
+      <details><summary>Is Lune recording my screen?</summary><p>No. macOS files system audio under “Screen &amp; System Audio Recording”, which is why it asks. Lune listens to the sound to find the beat and, with boringNotch, looks only at that app’s notch. Nothing is saved or sent anywhere.</p></details>
+      <details><summary>Why does macOS warn me when I first open it?</summary><p>The apps are free and not notarised by Apple. Right-click the app, choose Open, then Open again. You only do this once. You can check the download against the SHA-256 listed above.</p></details>
+      <details><summary>How do I uninstall?</summary><p>Quit the app from its menu-bar icon and drag it from Applications to the Bin. That’s everything.</p></details>
+    </div>
+  </section>
+
+  <footer class="wrap liner" aria-label="Liner notes">
+    <div><span class="label">Made by</span><b>Razib</b></div>
+    <div><span class="label">Recorded</span><b>November 2026</b></div>
+    <div><span class="label">Lyrics</span><b>LRCLIB, word timing by Vers</b></div>
+    <div><span class="label">Runs on</span><b>macOS 14+, Apple silicon</b></div>
+  </footer>
+</main>
+
+<script>
+(() => {
+  // ---------- Records: example album palettes ----------
+  const records = [
+    { name: "Violet Hour", colors: ["#8b6cff", "#c7b8ff", "#3c2a8a"], cover: "radial-gradient(circle at 30% 30%, #c7b8ff, #6a4bff 45%, #1d1240 80%)" },
+    { name: "Gold Room", colors: ["#f2b45a", "#ffe1a8", "#7a4a12"], cover: "conic-gradient(from 200deg at 60% 40%, #3b2208, #f2b45a, #ffe1a8, #7a4a12, #3b2208)" },
+    { name: "Red Static", colors: ["#ff4d5e", "#ffb3a8", "#5c0f1a"], cover: "repeating-linear-gradient(115deg, #ff4d5e 0 14px, #2a0a10 14px 22px, #ffb3a8 22px 26px)" },
+    { name: "Sea Glass", colors: ["#3fd0c9", "#b8fff6", "#0f4f57"], cover: "linear-gradient(160deg, #b8fff6, #3fd0c9 40%, #0f4f57)" },
+    { name: "Bloom", colors: ["#ff7ac6", "#ffd1ec", "#6b1f4f"], cover: "radial-gradient(circle at 70% 70%, #ffd1ec, #ff7ac6 35%, #2b0a20 75%)" },
+    { name: "Grey Tape", colors: ["#e9e9ef", "#ffffff", "#6b6b76"], cover: "linear-gradient(90deg, #111 0 30%, #e9e9ef 30% 34%, #222 34% 70%, #6b6b76 70%)" },
+  ];
+  const hex = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  let palette = records[0].colors.map(hex), target = palette.map(c => c.slice());
+  const crate = document.getElementById("crate");
+  records.forEach((r, i) => {
+    const b = document.createElement("button");
+    b.className = "record"; b.type = "button"; b.setAttribute("aria-pressed", i === 0);
+    b.innerHTML = `<span class="cover" style="background:${r.cover}"></span><span>${r.name}</span>`;
+    b.addEventListener("click", () => pickRecord(i));
+    crate.appendChild(b);
+  });
+  function pickRecord(i) {
+    [...crate.children].forEach((b, k) => b.setAttribute("aria-pressed", k === i));
+    target = records[i].colors.map(hex);
+    const s = document.documentElement.style;
+    s.setProperty("--glow", records[i].colors[0]); s.setProperty("--glow-2", records[i].colors[1]); s.setProperty("--glow-3", records[i].colors[2]);
+  }
+
+  // ---------- Controls ----------
+  const modes = ["Default", "Music Sync", "Idle", "No Animation"];
+  const styles = ["Constellation", "Branches", "Web", "Codestyle", "Codestyle Visual", "Visual", "Ship", "Fisheye", "Fisheye Visual"];
+  let mode = "Default", style = "Constellation";
+  function chips(id, list, get, set) {
+    const host = document.getElementById(id);
+    list.forEach(name => {
+      const b = document.createElement("button");
+      b.className = "chip"; b.type = "button"; b.textContent = name;
+      b.setAttribute("aria-pressed", name === get());
+      b.addEventListener("click", () => { set(name); [...host.children].forEach(c => c.setAttribute("aria-pressed", c.textContent === name)); caption(); });
+      host.appendChild(b);
+    });
+  }
+  chips("modes", modes, () => mode, v => mode = v);
+  chips("styles", styles, () => style, v => { style = v; resetStyle(); });
+  const cap = document.getElementById("caption");
+  function caption() { cap.textContent = `Lune · ${mode} — Vers · ${style}`; }
+
+  document.querySelectorAll(".copy").forEach(btn => btn.addEventListener("click", async () => {
+    const code = document.getElementById(btn.dataset.copy);
+    try { await navigator.clipboard.writeText(code.textContent); btn.textContent = "Copied"; }
+    catch { const r = document.createRange(); r.selectNodeContents(code); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected"; }
+    setTimeout(() => btn.textContent = "Copy", 1600);
+  }));
+
+  // ---------- Demo lyrics (written for this page) ----------
+  const lines = [
+    "Leave the light on in the window",
+    "I can hear the city breathing slow",
+    "every word a little star tonight",
+    "falling into place before you know",
+  ];
+  const words = []; let clock = 0.6;
+  lines.forEach((line, li) => {
+    line.split(" ").forEach(w => {
+      const d = 0.24 + w.length * 0.045;
+      words.push({ text: w, start: clock, end: clock + d, line: li }); clock += d + 0.06;
+    });
+    clock += 0.9;
+  });
+  const loop = clock + 0.6;
+  const icons = { light: "☀", window: "▢", city: "▦", breathing: "≈", star: "✦", tonight: "☾", falling: "↓", place: "⌂", hear: "◉", word: "✎" };
+
+  // ---------- Canvas ----------
+  const canvas = document.getElementById("screen"), ctx = canvas.getContext("2d");
+  const band = document.createElement("canvas"), bctx = band.getContext("2d");
+  let W = 0, H = 0, dpr = 1;
+  function resize() {
+    const r = canvas.getBoundingClientRect(); dpr = Math.min(2, window.devicePixelRatio || 1);
+    W = r.width; H = r.height;
+    for (const c of [canvas, band]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+    resetStyle();
+  }
+  new ResizeObserver(resize).observe(canvas);
+
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+  const mix = (a, b, t) => a.map((v, i) => v + (b[i] - v) * t);
+  const hash = (i, s) => { let h = (i * 2654435761 + s * 40503) >>> 0; h ^= h >>> 13; h = Math.imul(h, 0x5bd1e995) >>> 0; h ^= h >>> 15; return (h % 10000) / 10000; };
+
+  // Rim path: the screen edge with a notch, sampled every few px with arc length.
+  function rimPoints() {
+    const pts = [], inset = 1.5, r = Math.min(14, W * 0.02), nw = W * 0.122, nh = H * 0.033;
+    const push = (x, y) => pts.push([x, y]);
+    const arc = (cx, cy, a0, a1, rad) => { for (let k = 0; k <= 8; k++) { const a = a0 + (a1 - a0) * k / 8; push(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad); } };
+    const L = inset, T = inset, R = W - inset, B = H - inset, nl = W / 2 - nw / 2, nr = W / 2 + nw / 2;
+    push(nr + 8, T);
+    for (let x = nr + 8; x < R - r; x += 6) push(x, T);
+    arc(R - r, T + r, -Math.PI / 2, 0, r);
+    for (let y = T + r; y < B - r; y += 6) push(R, y);
+    arc(R - r, B - r, 0, Math.PI / 2, r);
+    for (let x = R - r; x > L + r; x -= 6) push(x, B);
+    arc(L + r, B - r, Math.PI / 2, Math.PI, r);
+    for (let y = B - r; y > T + r; y -= 6) push(L, y);
+    arc(L + r, T + r, Math.PI, Math.PI * 1.5, r);
+    for (let x = L + r; x < nl - 8; x += 6) push(x, T);
+    // Down and round the notch.
+    push(nl - 2, T + 2); for (let y = T + 6; y < nh; y += 4) push(nl + 1, y);
+    arc(nl + 9, nh, Math.PI, Math.PI / 2, 8); for (let x = nl + 9; x < nr - 9; x += 6) push(x, nh + 8);
+    arc(nr - 9, nh, Math.PI / 2, 0, 8); for (let y = nh; y > T + 6; y -= 4) push(nr - 1, y);
+    push(nr + 2, T + 2);
+    let s = 0; return pts.map((p, i) => { if (i) s += Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]); return [p[0], p[1], s]; });
+  }
+
+  let flow = 0, colourPhase = 0, beat = 0;
+  function drawRim(dt, t) {
+    const pts = rimPoints(), per = pts[pts.length - 1][2] || 1;
+    const scale = W / 1512;                         // demo screen vs a real 14" MacBook
+    const speed = mode === "Idle" ? 0.25 : mode === "Music Sync" ? 0.55 : mode === "No Animation" ? 0 : 1;
+    // Music Sync in the demo: a steady 96 BPM kick.
+    const bp = (t * 96 / 60) % 1, kick = mode === "Music Sync" ? Math.exp(-bp * 7) : 0;
+    beat += (kick - beat) * Math.min(1, dt * 30);
+    flow += dt * (speed + beat * 2.5) * (reduce ? 0.2 : 1);
+    colourPhase += dt * (mode === "No Animation" ? 0 : mode === "Idle" ? 0.035 : 0.12) * (reduce ? 0.2 : 1);
+    bctx.setTransform(dpr, 0, 0, dpr, 0, 0); bctx.clearRect(0, 0, W, H);
+    bctx.lineCap = "round";
+    const thick = 7 * Math.max(0.6, scale * 1.6);
+    for (let i = 1; i < pts.length; i++) {
+      const [x0, y0] = pts[i - 1], [x1, y1, s] = pts[i];
+      const sp = s / scale;                         // pattern in real-screen points
+      let lit = 1;
+      if (mode !== "No Animation") {
+        const n = 0.62 * Math.sin(sp / 300 - flow * 4.0) + 0.38 * Math.sin(sp / 175 + flow * 2.4 + 1.7);
+        const lo = mode === "Idle" ? 0.45 : 0.1, a = mode === "Music Sync" ? -0.35 - beat * 0.7 : -0.35;
+        lit = lo + (1 - lo) * Math.min(1, Math.max(0, (n - a) / (0.9)));
+        lit = lit * lit * (3 - 2 * lit) * (1 - lo) + lo;
+      }
+      // Colour travels round the rim; 60/40 or thirds like the app.
+      const f = ((s / per - colourPhase) % 1 + 1) % 1;
+      const n3 = palette.length;
+      const seg = f * n3, k = Math.floor(seg) % n3, u = seg - Math.floor(seg);
+      const blend = Math.min(1, Math.max(0, (u - 0.8) / 0.2));
+      const col = mix(palette[k], palette[(k + 1) % n3], blend);
+      bctx.strokeStyle = rgba(mix(col, [255, 255, 255], 0.18 * lit), Math.max(0.08, lit));
+      bctx.lineWidth = thick * (0.4 + 0.85 * lit) * (1 + beat * 0.5);
+      bctx.beginPath(); bctx.moveTo(x0, y0); bctx.lineTo(x1, y1); bctx.stroke();
+    }
+    // Glow: the band blurred twice, then the crisp band and a light core on top.
+    ctx.save(); ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalCompositeOperation = "lighter";
+    const g = 18 * Math.max(0.6, scale * 1.6) * (1 + beat * 0.8);
+    ctx.filter = `blur(${g * dpr}px)`; ctx.globalAlpha = 0.9; ctx.drawImage(band, 0, 0);
+    ctx.filter = `blur(${g * 0.35 * dpr}px)`; ctx.globalAlpha = 0.9; ctx.drawImage(band, 0, 0);
+    ctx.filter = "none"; ctx.globalAlpha = 1; ctx.drawImage(band, 0, 0);
+    ctx.restore();
+  }
+
+  // ---------- Lyric styles ----------
+  let layout = {};
+  function resetStyle() { layout = {}; }
+  const lineWords = li => words.map((w, i) => i).filter(i => words[i].line === li);
+  function font(size, weight = 700, family = "Hanken Grotesk") { return `${weight} ${size}px "${family}", "Helvetica Neue", Arial, sans-serif`; }
+  function textCol(i, cur) { return i === cur ? [255, 255, 255] : mix(palette[1], [255, 255, 255], 0.1); }
+  function star(x, y, r, col) {
+    ctx.beginPath();
+    for (let k = 0; k <= 4; k++) {
+      const a = k * Math.PI / 2 - Math.PI / 2, tx = x + Math.cos(a) * r, ty = y + Math.sin(a) * r;
+      if (k === 0) ctx.moveTo(tx, ty); else { const m = a - Math.PI / 4; ctx.quadraticCurveTo(x + Math.cos(m) * r * 0.16, y + Math.sin(m) * r * 0.16, tx, ty); }
+    }
+    ctx.fillStyle = col; ctx.fill();
+  }
+  function label(text, x, y, size, col, align = "center", fam) { ctx.font = font(size, 700, fam); ctx.textAlign = align; ctx.textBaseline = "middle"; ctx.fillStyle = col; ctx.fillText(text, x, y); }
+
+  function drawLyrics(t) {
+    let cur = -1; for (let i = 0; i < words.length; i++) if (words[i].start <= t) cur = i;
+    if (cur < 0) return;
+    const base = Math.min(H * 0.085, 64), li = words[cur].line, idx = lineWords(li);
+    const sung = idx.filter(i => words[i].start <= t);
+    const lyric = rgba(mix(palette[1], [255, 255, 255], 0.15), 1), dim = rgba(palette[1], 0.55), accent = rgba(palette[0], 1);
+    const visual = style.includes("Visual");
+    ctx.save();
+    if (style === "Constellation") {
+      if (layout.line !== li) {
+        layout = { line: li, pts: {} };
+        const n = idx.length, span = Math.min(W * 0.66, (n - 1) * base * 1.5), cx = W / 2, cy = H * (0.5 + (hash(li, 2) - 0.5) * 0.12), A = H * 0.12, shape = Math.floor(hash(li, 3) * 3);
+        idx.forEach((i, k) => {
+          const u = n > 1 ? k / (n - 1) : 0.5; let y = cy;
+          if (shape === 0) y = cy + A * 0.5 - Math.sin(Math.PI * u) * A;
+          else if (shape === 1) y = cy + Math.sin(u * Math.PI * 2.3) * A * 0.55;
+          else y = cy + (k % 2 ? 1 : -1) * A * (0.3 + 0.3 * hash(i, 4));
+          layout.pts[i] = [cx - span / 2 + u * span + (hash(i, 5) - 0.5) * base * 0.4, y + (hash(i, 6) - 0.5) * base * 0.4];
+        });
+      }
+      const show = sung.concat(idx.includes(cur + 1) ? [cur + 1] : []);
+      ctx.strokeStyle = rgba(palette[1], 0.5); ctx.lineWidth = 1; ctx.beginPath();
+      show.forEach((i, k) => { const p = layout.pts[i]; k ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1]); }); ctx.stroke();
+      show.forEach(i => {
+        const [x, y] = layout.pts[i], isCur = i === cur, next = i === cur + 1;
+        if (isCur) { star(x, y, base * 0.24, "#fff"); ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(x, y, base * 0.38, 0, Math.PI * 2); ctx.stroke(); label(words[i].text, x, y + base * 0.85, base * 0.62, "#fff"); }
+        else if (next) { ctx.fillStyle = dim; ctx.beginPath(); ctx.arc(x, y, 2.5, 0, 7); ctx.fill(); label(words[i].text, x, y + base * 0.45, base * 0.3, rgba(palette[1], 0.4)); }
+        else { star(x, y, base * 0.1, lyric); label(words[i].text, x, y + (hash(i, 7) > 0.5 ? 1 : -1) * base * 0.42, base * 0.3, dim); }
+      });
+    } else if (style === "Web") {
+      const hub = [W / 2, H * 0.53], R = Math.min(H * 0.38, W * 0.3);
+      ctx.strokeStyle = "rgba(255,255,255,0.09)"; ctx.lineWidth = 1;
+      for (let k = 0; k < 12; k++) { const a = k / 12 * Math.PI * 2 - Math.PI / 2; ctx.beginPath(); ctx.moveTo(hub[0], hub[1]); ctx.lineTo(hub[0] + Math.cos(a) * R, hub[1] + Math.sin(a) * R); ctx.stroke(); }
+      for (let ring = 1; ring <= 5; ring++) { ctx.beginPath(); for (let k = 0; k <= 12; k++) { const a = k / 12 * Math.PI * 2 - Math.PI / 2, r = R * ring / 5; k ? ctx.lineTo(hub[0] + Math.cos(a) * r, hub[1] + Math.sin(a) * r) : ctx.moveTo(hub[0] + Math.cos(a) * r, hub[1] + Math.sin(a) * r); } ctx.stroke(); }
+      const start = Math.floor(hash(li, 8) * 12);
+      sung.forEach((i, k) => {
+        const a = ((start + k * 5) % 12) / 12 * Math.PI * 2 - Math.PI / 2, rr = R * (0.45 + 0.5 * hash(i, 9));
+        const p = [hub[0] + Math.cos(a) * rr, hub[1] + Math.sin(a) * rr], grow = Math.min(1, (t - words[i].start) / 0.4), isCur = i === cur;
+        const ctl = [(hub[0] + p[0]) / 2 - (p[1] - hub[1]) * 0.18, (hub[1] + p[1]) / 2 + (p[0] - hub[0]) * 0.18];
+        ctx.strokeStyle = isCur ? accent : rgba(palette[0], 0.45); ctx.lineWidth = isCur ? 1.8 : 1.1; ctx.beginPath(); ctx.moveTo(hub[0], hub[1]);
+        for (let s2 = 1; s2 <= 24; s2++) { const u = s2 / 24 * grow, A = (1 - u) ** 2, Bq = 2 * (1 - u) * u, C = u * u; ctx.lineTo(A * hub[0] + Bq * ctl[0] + C * p[0], A * hub[1] + Bq * ctl[1] + C * p[1]); }
+        ctx.stroke();
+        ctx.fillStyle = isCur ? "#fff" : lyric; ctx.beginPath(); ctx.arc(p[0], p[1], 3, 0, 7); ctx.fill();
+        const out = Math.sin(a) > 0 ? 1 : -1;
+        label(words[i].text, p[0], p[1] + out * (isCur ? base * 0.55 : base * 0.36), isCur ? base * 0.55 : base * 0.33, isCur ? "#fff" : dim);
+      });
+    } else if (style === "Branches") {
+      const n = idx.length, x0 = W * 0.16, sp = Math.min(base * 2.2, W * 0.68 / n), cy = H * 0.55, amp = base * 0.3, ph = hash(li, 10) * 6;
+      const sy = x => cy + Math.sin((x - x0) / (sp * 1.15) * Math.PI + ph) * amp;
+      let head = x0;
+      sung.forEach((i, k) => {
+        const bx = x0 + (k + 0.5) * sp, root = [bx, sy(bx)], up = (k % 2 === 0) !== (hash(i, 11) > 0.75), len = base * (1.2 + hash(i, 12) * 1.4);
+        const p = [bx + (hash(i, 13) - 0.5) * sp * 0.7, root[1] + (up ? -len : len)], isCur = i === cur;
+        ctx.strokeStyle = isCur ? accent : rgba(palette[0], 0.45); ctx.lineWidth = isCur ? 1.6 : 1;
+        ctx.beginPath(); ctx.moveTo(root[0], root[1]); ctx.bezierCurveTo(root[0], root[1] + (p[1] - root[1]) * 0.55, p[0], root[1] + (p[1] - root[1]) * 0.45, p[0], p[1]); ctx.stroke();
+        ctx.fillStyle = isCur ? accent : lyric; ctx.beginPath(); ctx.arc(p[0], p[1], 3, 0, 7); ctx.fill();
+        label(words[i].text, p[0], p[1] + (up ? -1 : 1) * (isCur ? base * 0.55 : base * 0.35), isCur ? base * 0.62 : base * 0.34, isCur ? "#fff" : dim);
+        head = isCur ? bx + Math.min(1, (t - words[i].start) / (words[i].end - words[i].start)) * sp * 0.5 : Math.max(head, bx);
+      });
+      ctx.strokeStyle = "rgba(255,255,255,0.88)"; ctx.lineWidth = 1.8; ctx.beginPath();
+      for (let x = x0; x <= head; x += 3) x === x0 ? ctx.moveTo(x, sy(x)) : ctx.lineTo(x, sy(x)); ctx.stroke();
+      ctx.shadowColor = accent; ctx.shadowBlur = 12; ctx.fillStyle = accent; ctx.beginPath(); ctx.arc(head, sy(head), 4.5, 0, 7); ctx.fill();
+    } else if (style.startsWith("Codestyle")) {
+      const F = Math.round(base * 0.5), rowH = F * 1.45, rows = [];
+      for (let k = 0; k < idx.length;) { const size = hash(idx[k], 14) > 0.5 ? 3 : 2; rows.push(idx.slice(k, k + size)); k += size; }
+      const rc = rows.findIndex(r => r.includes(cur));
+      const roles = [palette[0], mix(palette[1], [255, 255, 255], 0.2), mix(palette[1], [120, 160, 255], 0.55), palette[2].map(v => Math.min(255, v + 90))];
+      ctx.font = font(F, 600, "Martian Mono"); ctx.textBaseline = "middle"; ctx.textAlign = "left";
+      for (let r = Math.max(0, rc - 2); r <= rc; r++) {
+        let x = W * 0.3 + (hash(li * 17 + r, 15) - 0.5) * W * 0.1; const y = H * 0.55 - (rc - r) * rowH;
+        const call = hash(li * 31 + r, 16) > 0.45;
+        if (visual && hash(li * 13 + r, 17) > 0.35) { label("⌘", x - F * 0.9, y, F * 0.8, accent, "center"); }
+        rows[r].forEach((i, j) => {
+          let w = words[i].text.toLowerCase().replace(/[^a-z0-9']/g, "");
+          let tok = j === 0 ? w : call && j === rows[r].length - 1 ? `.(${w})` : `.${w}`;
+          if (j === rows[r].length - 1 && r === rows.length - 1) tok += ";";
+          const full = ctx.measureText(tok).width;
+          if (words[i].start <= t) {
+            const typed = Math.min(1, (t - words[i].start) / Math.max(0.12, Math.min(0.4, words[i].end - words[i].start)));
+            const shown = tok.slice(0, Math.max(1, Math.round(tok.length * typed)));
+            ctx.fillStyle = rgba(roles[Math.floor(hash(i, 18) * 4)], r === rc ? 1 : 0.5);
+            ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = r === rc ? 10 : 0;
+            ctx.fillText(shown, x, y); ctx.shadowBlur = 0;
+            if (i === cur) { const cx = x + ctx.measureText(shown).width + 2; ctx.fillStyle = `rgba(255,59,48,${0.55 + 0.45 * Math.cos(t * 7)})`; ctx.fillRect(cx, y - F * 0.55, F * 0.5, F * 1.1); }
+          }
+          x += full;
+        });
+      }
+    } else if (style.startsWith("Fisheye")) {
+      [cur - 1, cur, cur + 1].forEach((i, k) => {
+        if (i < 0 || i >= words.length) return;
+        const isCur = i === cur, y = H * 0.5 + (k - 1) * base * 1.25, size = isCur ? base * 1.15 : base * 0.46;
+        label(words[i].text, W / 2, y, size, isCur ? "#fff" : rgba(palette[1], i > cur ? 0.4 : 0.6));
+        const ic = icons[words[i].text.toLowerCase().replace(/[^a-z]/g, "")];
+        if (visual && ic) { ctx.font = font(size, 700); const w = ctx.measureText(words[i].text).width; label(ic, W / 2 + w / 2 + size * 0.5, y, size * 0.7, accent); }
+      });
+      // A soft glass highlight over the middle word.
+      const g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, H * 0.26); g.addColorStop(0, "rgba(255,255,255,0.05)"); g.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(W / 2, H / 2, H * 0.26, 0, 7); ctx.fill();
+    } else {
+      // Ship and Visual: the last five sung words stack into a tilted, drifting wall.
+      const shown = sung.slice(-5), sizes = [0.62, 0.8, 1, 1, 1.22, 1.45], sway = style === "Ship" ? 1 : 0.5;
+      ctx.translate(W / 2, H / 2); ctx.rotate(Math.sin(t * 0.4) * 0.04 * sway); ctx.transform(1, Math.sin(t * 0.3) * 0.05 * sway, 0, 1, 0, 0); ctx.translate(-W / 2, -H / 2);
+      let y = H * 0.62, prevHalf = 0;
+      shown.slice().reverse().forEach((i, age) => {
+        const size = base * sizes[Math.floor(hash(i, 1) * sizes.length)], h = size * 1.05;
+        if (age) y -= prevHalf + h / 2 + base * 0.04; prevHalf = h / 2;
+        const x = W / 2 + (hash(i, 2) - 0.5) * base * 1.1, isCur = i === cur, active = isCur && t < words[i].end + 0.08;
+        ctx.font = font(size, 800); const w = ctx.measureText(words[i].text).width;
+        if (active) { const fill = Math.min(1, (t - words[i].start) / (words[i].end - words[i].start)); ctx.fillStyle = accent; ctx.fillRect(x - w / 2 - size * 0.12, y - size * 0.5, (w + size * 0.24) * (0.18 + 0.82 * (1 - (1 - fill) ** 2.2)), size * 1.0); }
+        label(words[i].text, x, y, size, active ? "#fff" : rgba(mix(palette[1], [255, 255, 255], 0.15), Math.max(0.25, 1 - age * 0.16)));
+        const ic = icons[words[i].text.toLowerCase().replace(/[^a-z]/g, "")];
+        if (visual && ic) label(ic, x + w / 2 + size * 0.5, y, size * 0.7, accent);
+      });
+    }
+    ctx.restore();
+  }
+
+  // ---------- Loop ----------
+  let last = performance.now(), t0 = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.05, (now - last) / 1000); last = now;
+    for (let i = 0; i < palette.length; i++) palette[i] = mix(palette[i], target[i], Math.min(1, dt / 0.35));
+    if (W > 0) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = "#050407"; ctx.fillRect(0, 0, W, H);
+      const t = ((now - t0) / 1000) % loop;
+      drawLyrics(t);
+      drawRim(dt, (now - t0) / 1000);
+    }
+    requestAnimationFrame(frame);
+  }
+  resize(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
