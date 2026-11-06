@@ -1,0 +1,13 @@
+{
+  "windows": {
+    "version": "1.4.0",
+    "Lune": {
+      "url": "https://github.com/MrRobloxYT/lune-vers-windows/releases/download/windows-1.4/Lune-Setup.exe",
+      "sha256": "3ee2dcae34268f701567bc8369734570ef189f4017c3e6d047bb2445d03e3e65"
+    },
+    "Vers": {
+      "url": "https://github.com/MrRobloxYT/lune-vers-windows/releases/download/windows-1.4/Vers-Setup.exe",
+      "sha256": "3a53824fed8819b1798ab98738bd934fc941f387d0e656c08de966745c41a252"
+    }
+  }
+}
