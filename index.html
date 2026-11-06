@@ -198,10 +198,11 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
     <div class="hero-head">
       <h1 id="title">Lune <span class="amp">&amp;</span><br>Vers</h1>
       <div>
-        <p class="lede">Two free menu-bar apps for listening at night. <strong>Lune</strong> lights the edge of your screen in the colours of the album that’s playing. <strong>Vers</strong> lights the lyrics, one word at a time, the moment each word is sung. <em>Spotify or Apple Music. macOS 14 or later.</em></p>
+        <p class="lede">Two free menu-bar apps for listening at night. <strong>Lune</strong> lights the edge of your screen in the colours of the album that’s playing. <strong>Vers</strong> lights the lyrics, one word at a time, the moment each word is sung. <em>Spotify or Apple Music. macOS 14 or later, or Windows 10 and 11.</em></p>
         <div class="cta">
           <a class="btn primary" href="downloads/Lune-1.0.dmg" download>Get Lune <small>1.0 MB</small></a>
           <a class="btn" href="downloads/Vers-1.0.dmg" download>Get Vers <small>0.9 MB</small></a>
+          <a class="btn" href="#download-windows">For Windows <small>10 &amp; 11</small></a>
         </div>
       </div>
     </div>
@@ -381,18 +382,46 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
         </div>
       </article>
     </div>
+    <h3 class="label" id="download-windows" style="margin:34px 0 14px">For Windows</h3>
+    <div class="dl-row">
+      <article class="dl">
+        <img src="assets/lune.png" alt="">
+        <div style="min-width:0">
+          <h3>Lune 1.0 for Windows</h3>
+          <dl>
+            <dt>File</dt><dd>Lune-Setup-1.0.exe · 73 MB</dd>
+            <dt>Needs</dt><dd>Windows 10 or 11 · 64-bit</dd>
+            <dt>SHA-256</dt><dd class="hash"><code id="h-lune-win">0f7d580d1ecaf8ed88323430ab47e793c8830be38f5bd083eaac60626f81a221</code><button class="copy" type="button" data-copy="h-lune-win">Copy</button></dd>
+          </dl>
+          <a class="btn primary" href="https://github.com/MrRobloxYT/lune-vers/releases/download/windows-1.0/Lune-Setup-1.0.exe">Download Lune for Windows</a>
+        </div>
+      </article>
+      <article class="dl">
+        <img src="assets/vers.png" alt="">
+        <div style="min-width:0">
+          <h3>Vers 1.0 for Windows</h3>
+          <dl>
+            <dt>File</dt><dd>Vers-Setup-1.0.exe · 73 MB</dd>
+            <dt>Needs</dt><dd>Windows 10 or 11 · 64-bit</dd>
+            <dt>SHA-256</dt><dd class="hash"><code id="h-vers-win">2e83b5526ab1dfbdecc35b66a9984ef88b9f9a117b0bd20a6e6b6639ff3c0222</code><button class="copy" type="button" data-copy="h-vers-win">Copy</button></dd>
+          </dl>
+          <a class="btn primary" href="https://github.com/MrRobloxYT/lune-vers/releases/download/windows-1.0/Vers-Setup-1.0.exe">Download Vers for Windows</a>
+        </div>
+      </article>
+    </div>
   </section>
 
   <section class="wrap faq" id="faq" aria-labelledby="f-title">
     <h2 id="f-title">Questions</h2>
     <div>
       <details><summary>Do they cost anything?</summary><p>No. Both apps are free, with no account and nothing to sign in to.</p></details>
-      <details><summary>Which music apps work?</summary><p>Spotify and Apple Music. Start a song and both apps notice on their own; there’s no Connect button.</p></details>
+      <details><summary>Which music apps work?</summary><p>On a Mac, Spotify and Apple Music. On Windows, anything that shows in the volume pop-up: Spotify, Apple Music, YouTube in a browser and more. Start a song and both apps notice on their own; there’s no Connect button.</p></details>
       <details><summary>Do the lyrics show on the lock screen?</summary><p>No. Vers shows lyrics on your desktop and over full-screen apps while you’re signed in. Drawing on the macOS lock screen needs private system access, so we left it out.</p></details>
       <details><summary>Does every song have lyrics?</summary><p>Most popular songs do. Vers finds them on LRCLIB, a free lyrics library, and also tries the plain song title for tracks like “Song (feat. Someone) – Remix”. If nothing is found, the menu says so.</p></details>
       <details><summary>Is Lune recording my screen?</summary><p>No. macOS files system audio under “Screen &amp; System Audio Recording”, which is why it asks. Lune listens to the sound to find the beat and, with boringNotch, looks only at that app’s notch. Nothing is saved or sent anywhere.</p></details>
       <details><summary>Why does macOS warn me when I first open it?</summary><p>The apps are free and not notarised by Apple. Right-click the app, choose Open, then Open again. You only do this once. You can check the download against the SHA-256 listed above.</p></details>
-      <details><summary>How do I uninstall?</summary><p>Quit the app from its menu-bar icon and drag it from Applications to the Bin. That’s everything.</p></details>
+      <details><summary>Why does Windows warn me when I run the installer?</summary><p>The installers aren’t signed with a paid certificate, so SmartScreen may say “Windows protected your PC”. Click More info, then Run anyway. You can check the file against the SHA-256 listed above.</p></details>
+      <details><summary>How do I uninstall?</summary><p>On a Mac, quit the app from its menu-bar icon and drag it from Applications to the Bin. On Windows, quit it from its tray icon and remove it in Settings → Apps.</p></details>
     </div>
   </section>
 
@@ -401,7 +430,7 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
     <div><span class="label">Contact</span><b><a href="mailto:rizwanahmedayaz@gmail.com" style="color:inherit;overflow-wrap:anywhere">rizwanahmedayaz@gmail.com</a></b></div>
     <div><span class="label">Recorded</span><b>November 2026</b></div>
     <div><span class="label">Lyrics</span><b>LRCLIB, word timing by Vers</b></div>
-    <div><span class="label">Runs on</span><b>macOS 14+, Apple silicon</b></div>
+    <div><span class="label">Runs on</span><b>macOS 14+ · Windows 10 &amp; 11</b></div>
   </footer>
 </main>
 
