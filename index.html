@@ -175,10 +175,59 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
 .liner b { display: block; color: var(--ink); font-weight: 500; margin-top: 4px; }
 @media (max-width: 760px) { .liner { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
+
+/* ---------- Signature touches ---------- */
+@property --spin { syntax: "<angle>"; inherits: false; initial-value: 0deg; }
+/* The page itself wears Lune: a light that runs around the edge of the window. */
+.rim { position: fixed; inset: 0; z-index: 40; pointer-events: none; border-radius: 0;
+  padding: 3px; background: conic-gradient(from var(--spin), transparent 0 8%, var(--glow) 16%, var(--glow-2) 22%, transparent 34% 52%, var(--glow) 62%, var(--glow-3) 70%, transparent 80%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: spin 14s linear infinite; filter: drop-shadow(0 0 10px var(--glow)); opacity: .9; }
+.rim::after { content: ""; position: absolute; inset: 0; padding: 14px; background: inherit; filter: blur(22px); opacity: .45;
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+@keyframes spin { to { --spin: 360deg; } }
+/* Film grain, so the dark has texture like a printed sleeve. */
+body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-events: none; opacity: .07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+/* The title is sung: a light sweeps across it like Vers lighting a word. */
+.hero h1 .sung { background: linear-gradient(100deg, var(--ink) 0 40%, #fff 46%, var(--glow-2) 50%, #fff 54%, var(--ink) 60% 100%) 0 0 / 300% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; animation: sing 6s cubic-bezier(.6,.1,.3,1) infinite; }
+.hero h1 .sung + br + .sung { animation-delay: .5s; }
+@keyframes sing { 0% { background-position: 100% 0; } 45%, 100% { background-position: 0 0; } }
+/* A lyric marquee between the screen and the records: each word lights as it's "sung". */
+.lyricline { border-block: 1px solid var(--hairline); overflow: hidden; padding-block: 22px; margin-top: 10px; position: relative; }
+.lyricline::before, .lyricline::after { content: ""; position: absolute; top: 0; bottom: 0; width: 80px; z-index: 1; pointer-events: none; }
+.lyricline::before { left: 0; background: linear-gradient(90deg, var(--night), transparent); }
+.lyricline::after { right: 0; background: linear-gradient(-90deg, var(--night), transparent); }
+.lyricline .track-run { display: flex; gap: .5em; width: max-content; font: 400 clamp(30px, 5vw, 64px)/1 var(--display); white-space: nowrap; animation: run 60s linear infinite; }
+.lyricline .w { color: color-mix(in srgb, var(--ink) 18%, transparent); transition: color .25s, text-shadow .25s; }
+.lyricline .w.on { color: #fff; text-shadow: 0 0 28px var(--glow); }
+.lyricline .w.done { color: color-mix(in srgb, var(--glow-2) 70%, transparent); }
+.lyricline .dot { color: var(--glow); }
+@keyframes run { to { transform: translateX(-50%); } }
+/* The chosen sleeve lifts and lights the shelf under it. */
+.record .sleeve { display: block; position: relative; }
+.record .cover { display: block; }
+.record .disc { display: none; }
+.record[aria-pressed="true"] .cover { transform: translateY(-6px); box-shadow: 0 18px 40px -14px var(--glow), 0 0 0 1px #ffffff22; }
+.record[aria-pressed="true"] .sleeve::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: -10px; height: 2px; border-radius: 2px; background: var(--glow-2); box-shadow: 0 0 14px var(--glow); }
+/* Huge side letters behind each half, printed like a sleeve. */
+.side { position: relative; isolation: isolate; }
+.side::before { content: attr(data-side); position: absolute; left: -.04em; bottom: 10px; z-index: -1; font: 400 clamp(160px, 22vw, 300px)/.8 var(--display);
+  color: transparent; -webkit-text-stroke: 1px color-mix(in srgb, var(--glow) 28%, transparent); pointer-events: none; }
+@media (max-width: 860px) { .side::before { display: none; } }
+/* Download cards are sleeves; hover pulls the record out. */
+.dl { position: relative; overflow: hidden; isolation: isolate; }
+.dl::after { content: ""; position: absolute; right: -230px; top: 50%; width: 200px; aspect-ratio: 1; translate: 0 -50%; border-radius: 50%; z-index: -1; opacity: .5;
+  background: repeating-radial-gradient(circle, #0c0b10 0 2px, #17151d 2px 4px); box-shadow: inset 0 0 0 64px #0c0b10, inset 0 0 0 70px var(--glow); transition: right .5s cubic-bezier(.2,.8,.2,1), opacity .5s; opacity: 0; }
+.dl:hover::after { right: -120px; opacity: .8; }
+@media (prefers-reduced-motion: reduce) { .rim, .rim::after, .hero h1 .sung, .lyricline .track-run, .record .x { animation: none !important; } }
+
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
 </style>
 </head>
 <body>
+<div class="rim" aria-hidden="true"></div>
 
 <header class="bar">
   <div class="wrap">
@@ -196,7 +245,7 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
 <main id="top">
   <section class="wrap hero" aria-labelledby="title">
     <div class="hero-head">
-      <h1 id="title">Lune <span class="amp">&amp;</span><br>Vers</h1>
+      <h1 id="title"><span class="sung">Lune</span> <span class="amp">&amp;</span><br><span class="sung">Vers</span></h1>
       <div>
         <p class="lede">Two free menu-bar apps for listening at night. <strong>Lune</strong> lights the edge of your screen in the colours of the album that’s playing. <strong>Vers</strong> lights the lyrics, one word at a time, the moment each word is sung. <em>Spotify or Apple Music. macOS 14 or later, or Windows 10 and 11.</em></p>
         <div class="cta">
@@ -222,6 +271,8 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
     </div>
   </section>
 
+  <div class="lyricline" aria-hidden="true"><div class="track-run" id="lyricrun"></div></div>
+
   <section class="wrap records" aria-labelledby="rec-title">
     <div>
       <h2 id="rec-title">Put a record on.</h2>
@@ -230,7 +281,7 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
     <div class="crate" id="crate" role="group" aria-label="Example album colours"></div>
   </section>
 
-  <section class="wrap side" id="lune" aria-labelledby="a-title">
+  <section class="wrap side" id="lune" data-side="A" aria-labelledby="a-title">
     <div class="side-head">
       <span class="label">Side A</span>
       <img src="assets/lune.png" alt="Lune app icon">
@@ -282,7 +333,7 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
     </div>
   </section>
 
-  <section class="wrap side" id="vers" aria-labelledby="b-title">
+  <section class="wrap side" id="vers" data-side="B" aria-labelledby="b-title">
     <div class="side-head">
       <span class="label">Side B</span>
       <img src="assets/vers.png" alt="Vers app icon">
@@ -452,7 +503,7 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
   records.forEach((r, i) => {
     const b = document.createElement("button");
     b.className = "record"; b.type = "button"; b.setAttribute("aria-pressed", i === 0);
-    b.innerHTML = `<span class="cover" style="background:${r.cover}"></span><span>${r.name}</span>`;
+    b.innerHTML = `<span class="sleeve"><span class="disc"></span><span class="cover" style="background:${r.cover}"></span></span><span>${r.name}</span>`;
     b.addEventListener("click", () => pickRecord(i));
     crate.appendChild(b);
   });
@@ -461,6 +512,21 @@ kbd { font: 400 12px var(--mono); border: 1px solid var(--hairline); border-bott
     target = records[i].colors.map(hex);
     const s = document.documentElement.style;
     s.setProperty("--glow", records[i].colors[0]); s.setProperty("--glow-2", records[i].colors[1]); s.setProperty("--glow-3", records[i].colors[2]);
+  }
+
+
+  // ---------- Lyric marquee: words light one after another ----------
+  const line = "the city hums in violet · every word arrives on time · light the edges of the room · stay until the final line · ";
+  const run = document.getElementById("lyricrun");
+  if (run) {
+    const html = line.split(" ").filter(Boolean).map(w => w === "·" ? '<span class="dot">·</span>' : `<span class="w">${w}</span>`).join("");
+    run.innerHTML = html + html;
+    const words = [...run.querySelectorAll(".w")], half = words.length / 2;
+    let k = 0;
+    if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setInterval(() => {
+      words.forEach((w, j) => { const i = j % half; w.classList.toggle("on", i === k); w.classList.toggle("done", i < k); });
+      k = (k + 1) % half;
+    }, 420);
   }
 
   // ---------- Controls ----------
