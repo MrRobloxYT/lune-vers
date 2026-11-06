@@ -753,7 +753,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-event
           if (words[i].start <= t) {
             const typed = Math.min(1, (t - words[i].start) / Math.max(0.12, Math.min(0.4, words[i].end - words[i].start)));
             const shown = tok.slice(0, Math.max(1, Math.round(tok.length * typed)));
-            ctx.fillStyle = rgba(roles[Math.floor(hash(i, 18) * 4)], r === rc ? 1 : 0.5);
+            ctx.fillStyle = rgba(roles[Math.min(3, Math.max(0, Math.floor(hash(i, 18) * 4)))], r === rc ? 1 : 0.5);
             ctx.shadowColor = ctx.fillStyle; ctx.shadowBlur = r === rc ? 10 : 0;
             ctx.fillText(shown, x, y); ctx.shadowBlur = 0;
             if (i === cur) { const cx = x + ctx.measureText(shown).width + 2; ctx.fillStyle = `rgba(255,59,48,${0.55 + 0.45 * Math.cos(t * 7)})`; ctx.fillRect(cx, y - F * 0.55, F * 0.5, F * 1.1); }
@@ -800,8 +800,9 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-event
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = "#050407"; ctx.fillRect(0, 0, W, H);
       const t = ((now - t0) / 1000) % loop;
-      drawLyrics(t);
-      drawRim(dt, (now - t0) / 1000);
+      // One bad frame must never stop the demo.
+      try { drawLyrics(t); } catch (e) { console.warn(e); }
+      try { drawRim(dt, (now - t0) / 1000); } catch (e) { console.warn(e); }
     }
     requestAnimationFrame(frame);
   }
