@@ -1,13 +1,13 @@
 {
   "windows": {
-    "version": "1.6.0",
+    "version": "1.7.0",
     "Lune": {
-      "url": "https://github.com/MrRobloxYT/lune-vers-windows/releases/download/windows-1.6/Lune-Setup.exe",
-      "sha256": "dea3ef440b11c9372669a5fa676c7d27a938e6df1e04596b2b1e765b897ce3f1"
+      "url": "https://github.com/MrRobloxYT/lune-vers-windows/releases/download/windows-1.7/Lune-Setup.exe",
+      "sha256": "4ac8e26d5f6d907a9922b05ea9868bb094ebfbfa85816fad3d0fbc308828fe94"
     },
     "Vers": {
-      "url": "https://github.com/MrRobloxYT/lune-vers-windows/releases/download/windows-1.6/Vers-Setup.exe",
-      "sha256": "520da38bb02bb9f51c9e620badd7a252904fbabd55b776f4808e560619e64efe"
+      "url": "https://github.com/MrRobloxYT/lune-vers-windows/releases/download/windows-1.7/Vers-Setup.exe",
+      "sha256": "8c8c0d81e693257e9e3e3710cc33d3eadfdc6f121a64d333fc9a30810a2a7195"
     }
   }
 }
