@@ -368,6 +368,7 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
         </div>
         <canvas id="light" aria-hidden="true"></canvas>
         <div class="notch" aria-hidden="true"></div>
+        <audio id="song" preload="none" crossorigin="anonymous" loop src="https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d4/97/06/d4970622-b87b-9af3-b375-21af92396852/mzaf_1443470814230920096.plus.aac.p.m4a"></audio>
         <div class="play-wrap"><button class="play" id="play" type="button" aria-label="Play the demo"><span class="play-ico" id="play-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style="margin-left:2px"><path d="M7 4.2 19.4 12 7 19.8Z"/></svg></span><span class="play-label" id="play-label">See it in action</span></button></div>
         <div class="screen-caption" id="caption">♪ Earrings · Malcolm Todd   Lune · Music Sync — Vers · Constellation</div>
       </div>
@@ -654,7 +655,7 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
 
   // ---------- Controls ----------
   const modes = ["Default", "Music Sync", "Idle", "No Animation"];
-  const styles = ["Constellation", "Branches", "Web", "Codestyle", "Codestyle Visual", "Visual", "Ship", "Fisheye", "Fisheye Visual"];
+  const styles = ["Constellation", "Branches", "Web", "Codestyle", "Codestyle Visual", "Visual", "Ship", "Fisheye", "Fisheye Visual", "Native Design", "Native Design Money", "Native Design Map", "Native Design Notifications"];
   let mode = "Music Sync", style = "Constellation";
   function chips(id, list, get, set) {
     const host = document.getElementById(id);
@@ -997,6 +998,18 @@ void main() {
   if (!drawLight) lightCanvas.remove();
   const anim = new GlowAnimator();
   let animSnap = true;
+  // Earrings by Malcolm Todd: Apple's 30 s preview, run through Lune's own
+  // BeatDetector offline (10 ms hops). It locks at 158 BPM. Energy and beat
+  // per 10 ms; tempo, beat position and section per 100 ms, on the clip's clock.
+  const EARRINGS_SIGNAL = {"E":"AAAAABNCaHyTmZiWlJGOjImGgn97eHVyb2tpZmNgXVtYVlNRT01KSEZEQ2mHjJympKOgnZqXlJGNiYaCf3t4dHFua2hlYl9dWlhVU1BOTEpui6K1xNDPzs3LyMXBvrm1sa2ppaGdmZWRjoqGg398eHVyb2xranaRp7nH0tvi6O3w8/X19fTz9ff29ff18/Py8e7r6u7x9Pb49/j6+/z8/f3+/v7+/v///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v7//f7+/v7////////////////////////////////////////////////////////////////////////////////////////+/v7+/v7+/////////////v79/f79/v7+/v7////9/Pv6+/r7+vn5+fj5+vv8/f39/v7+/v7+//79+/v7+vn5+fr7+/v8/P38/Pz7+ff18/X3+fr7/Pz9/f7+/fz8/P39+/z8+/n39PHu6+nm5OHf3NnX1NLb4ujs8PP19/n6+/z9/f3+/v7+/v////////////7////////////////////////////////+/v7+/v7+/f7+/f39/Pv6+/v7+vv8/P39/v7+/v7///////3+/v3+/v7+/fz7+/v6+Pf39fTy8vHw8/X3+fr7/Pz9/f7+/v39+/v8+vv6+fj29PPz8e/t6+vp5+Xk5OPo7fHz9vj5+vv8/f39/v7+/v7///////7///////////7+/v79/v7+/v7///////7+/Pz8+/n4+Pf5+Pn49vb19fXz8vDw7+3s6+ru8fT2+Pn7+/z8/f39/f7+/v7+/fz7+vr5+Pj39vf29fLw7+vn7PDz9ff5+vv8/P39/v7+/v7////////////////////////////////////////////////////////////////////////////////////////////////////////////+/////v7+/////////v78/f3+/v7+/v///////////v7////+/v7+/v79/fz9/Pv7+vn5+Pn7+/z9/f7+/v7+///9/v7+/v7///////////////////////////////////////////////////////////////////////7+/v///////////////////////v79/f39/f3+/v7+/vz8+/z6+vj6+/z8/f3+/v7+/v/////////////////////////+/v7+/v79+vv8/P39/v7+/v7//////////////v////////7//v7+/Pv5+Pb4+fr7/P39/v7+/v7///////////////////////////////////////////////////////////////////////////////////////////////////7+/////////////////////////////////////////////////////////////////////v7+/v7//////////////////////////////////////////////////////////////////f7+/v7+/////////////////////////////////v3+/v7+/v/////////+/v37+vn29PPw7+3s6urp5uPg3trX1NHOy8nIztff5uvv8vX3+Pr7/Pz9/f3+/v79/f39/f39/fz7+vn49ff5+vv8/P39/v7+/v7///////////////////////////////////////////////////////////////////////////////////////////////////////////////////7+/////v7+/v39/v7+/v7////////////////////////////////////////////////////////////////////////////////////////////+/v3+/v7+/v/////////////+/v79/f79/fz7/P39/v7+/v79/fz8/Pv8/f39/v7+/v///////////v7+/v/////////////+/v79/Pv5+Pn6+/z9/f3+/v7+/Pn49/Ty7+zq5+Xi39za19TRz83KyMXDwb7L1t7l6u7x9Pb4+fv7/P39/v7+/v7////////////////////////////////////+/v7+/v/9/f39/f39/v7+/v7+/v7////+/v7+//////////////////////////////79/v7+/v7//f37+vr5+vv8/P39/v7+/v7+/f3+/Pv8+/z6+vn39vX19PPx8O/u7evr6urv8vT3+Pr7/Pz9/f79/v7+/v7////////////+/v7+/Pv6+vr4+vv8/P39/f3+/v7+/v7+/fv7+/z8+/z7+vv6+fn49/f4+Pf29fP2+Pn6+/z9/f38/f3+/f39/v39+/n39PHv7Orp5uTg3drX1dXd5Onu8fT2+Pn6+/z9/f7+/v7+/////////////////////////////////////////////////////////////////////////////////////////////////////////v/+/v7+/v7+///////////+///////////////////////////+/v7+/v7+//7//v38+vn49/n6+/z8/f3+/v7+/v/////////////+/v7+/f79/f39/f39/f39/v7+/v7//////////////////////////////////v79/fv8/f3+/v7+/v///////////////////////////////////v78/Pv7/P39/v7+/v7+/v7//v/////////////////////+/v7+/v7+/f3+/v7+/v////////////////7//f7+/v79/vz8+vr5+Pf19PP2+Pn6+/z9/f3+/v7+/v////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////79/v39/f7+/v7+/////////////////////////////////////////////////f3+/v7+/v///////////////////////////v78+/z8/f3+/v7+/v///////f79/f39/Pv6+ff39PPy7+3s6+ro5eHf5eru8vT3+Pr7/Pz9/f7+/v7+//////////////////7+/v7+/v///////////////////////v79/v39/v39/f79/v7+/v7+/////////////////v7+//////38+vr49/bz8/L19PPx9PPz8fPy8fT2+Pn7+/z9/f37+fbz8e3q5+Tg3drX1dHa4ujs8PP19/n49/X19PLx8O/w8vDv7ezq6Obl4+De29nX1d7k6u7x9Pb49/f19PLx8O/x8e/w7u7r6ujm5OHf3NnX1NHOzMnHxcPCztjg5uvv8vHv7Ovq7vH09vj5+/v8+vv7+fj28/Lv7ero5uTh4N7c29rY19bV1NLR0M7M1t/l6u7y9Pb08/Lx7uvn497Z1dHNysfE0Nnh5+zw8/Lx7+zo5eLf3dzb393k6e7x9PT09vb39vTy7+3q7vH09vj5+/n49/Ty7/L19/j6+/z8/P39/v7+/v79/fz7+vj39/Xz8vDw7uzr6enn5Oru8fT2+Pn7+/r7/Pv7+/v6+vn4+vn6+/v6+vv7+vv6+Pj39vX09vj5+vv6+vn49/Xz8e/s7Oro5eTi4eDg3+Xq7vL09/j6+/z7+vn49vTz8vHv7Orp6Obl5OPi4d/e3dva19/m6+/x8PDz9fQ=","B":"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","P":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.378,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.38,0.378,0.378,0.378,0.378,0.378,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.379,0.749,0.749,0.749,0.748,0.748,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.749,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.751,0.751,0.751,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.75,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751,0.751],"C":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0.4,0.4,0.4,0.64,0.64,0.78,0.78,0.78,0.87,0.87,0.92,0.92,0.92,0.95,0.95,0.97,0.97,0.97,0.98,0.98,0.99,0.99,0.99,0.99,0.99,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0.87,0.87,0.87,0.79,0.79,0.74,0.74,0.74,0.62,0.62,0.54,0.54,0.54,0.5,0.5,0.45,0.45,0.45,0.42,0.42,0.41,0.41,0.41,0.38,0.38,0.35,0.35,0.35,0.34,0.34,0.34,0.34,0.34,0.36,0.36,0.35,0.35,0.35,0.36,0.36,0.4,0.4,0.4,0.4,0.4,0.47,0.47,0.47,0.52,0.52,0.55,0.55,0.55,0.49,0.49,0.52,0.52,0.52,0.54,0.54,0.48,0.48,0.48,0.44,0.44,0.47,0.47,0.47,0.49,0.49,0.5,0.5,0.5,0.52,0.52,0.53,0.53,0.53,0.53,0.53,0.54,0.54,0.54,0.47,0.47,0.43,0.43,0.43,0.42,0.42,0.47,0.47,0.47,0.52,0.52,0.57,0.57,0.57,0.63,0.63,0.66,0.66,0.66,0.69,0.69,0.68,0.68,0.68,0.7,0.7,0.71,0.71,0.71,0.62,0.62,0.58,0.58,0.58,0.56,0.56,0.73,0.73,0.73,0.84,0.84,0.9,0.9,0.9,0.76,0.76,0.69,0.69,0.69,0.74,0.74,0.73,0.73,0.73,0.72,0.72,0.72,0.72,0.72,0.72,0.72,0.73,0.73,0.73,0.74,0.74,0.72,0.72,0.72,0.75,0.75,0.76,0.76,0.76,0.8,0.8,0.82,0.82,0.82,0.8,0.8,0.78,0.78,0.78,0.75,0.75,0.71,0.71,0.71,0.69,0.69,0.7,0.7,0.7,0.73,0.73,0.75,0.75,0.75,0.75,0.75,0.76,0.76,0.76,0.81,0.81,0.87,0.87,0.87,0.92,0.92,0.95,0.95,0.95,0.97,0.97,0.98,0.98,0.98,0.97,0.97,0.95,0.95,0.95,0.95,0.95,0.95,0.95,0.95,0.93,0.93],"T":[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,3.844,3.844,3.844,4.222,4.222,4.212,4.212,4.212,4.59,4.59,4.958,4.958,4.958,4.948,4.948,5.336,5.336,5.336,5.705,5.705,5.695,5.695,5.695,6.063,6.063,6.44,6.44,6.44,6.431,6.431,6.809,6.809,6.809,7.196,7.196,7.147,7.147,7.147,7.525,7.525,7.903,7.903,7.903,7.911,7.911,8.287,8.287,8.287,8.671,8.671,8.685,8.685,8.685,9.05,9.05,9.423,9.423,9.423,9.425,9.425,9.806,9.806,9.806,10.187,10.187,10.188,10.188,10.188,10.569,10.569,10.939,10.939,10.939,10.939,10.939,11.32,11.32,11.32,11.71,11.71,11.71,11.71,11.71,12.09,12.09,12.47,12.47,12.47,12.43,12.43,12.81,12.81,12.81,13.184,13.184,13.189,13.189,13.189,13.566,13.566,13.944,13.944,13.944,13.931,13.931,14.308,14.308,14.308,14.7,14.7,14.7,14.7,14.7,15.071,15.071,15.441,15.441,15.441,15.443,15.443,15.812,15.812,15.812,16.19,16.19,16.195,16.195,16.195,16.566,16.566,16.933,16.933,16.933,16.938,16.938,17.332,17.332,17.332,17.724,17.724,17.726,17.726,17.726,18.107,18.107,18.488,18.488,18.488,18.499,18.499,18.879,18.879,18.879,18.879,18.879,19.249,19.249,19.249,19.63,19.63,19.93,19.93,19.93,19.93,19.93,20.31,20.31,20.31,20.69,20.69,20.678,20.678,20.678,21.061,21.061,21.439,21.439,21.439,21.446,21.446,21.83,21.83,21.83,22.203,22.203,21.792,21.792,21.792,22.539,22.539,22.54,22.54,22.54,22.542,22.542,23.291,23.291,23.291,23.673,23.673,23.664,23.664,23.664,23.667,23.667,24.418,24.418,24.418,24.419,24.419,24.421,24.421,24.421,25.171,25.171,25.172,25.172,25.172,25.175,25.175,25.917,25.917,25.917,25.919,25.919,25.919,25.919,25.919,26.67,26.67,26.68,26.68,26.68,26.679,26.679,27.429,27.429,27.429,27.429,27.429,27.428,27.428,27.428,28.181,28.181,28.182,28.182,28.182,28.184,28.184,28.936,28.936,28.936,28.935,28.935,28.936,28.936,28.936,29.69,29.69],"S":[0,0.05,-0.06,-0.34,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.4,-0.37,-0.21,-0.02,0.16,0.3,0.41,0.54,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.6,0.59,0.6,0.59,0.57,0.55,0.57,0.51,0.44,0.35,0.38,0.37,0.34,0.36,0.38,0.4,0.39,0.42,0.43,0.43,0.42,0.45,0.44,0.41,0.41,0.42,0.42,0.41,0.43,0.43,0.41,0.39,0.41,0.38,0.35,0.33,0.36,0.34,0.32,0.31,0.3,0.23,0.14,0.14,0.17,0.19,0.19,0.22,0.21,0.2,0.19,0.22,0.22,0.21,0.21,0.21,0.18,0.14,0.16,0.17,0.19,0.16,0.19,0.17,0.14,0.12,0.15,0.13,0.06,0.05,0.09,0.1,0.1,0.13,0.16,0.18,0.18,0.21,0.22,0.2,0.19,0.22,0.21,0.19,0.18,0.21,0.2,0.18,0.2,0.21,0.22,0.19,0.21,0.21,0.21,0.18,0.21,0.2,0.18,0.18,0.2,0.19,0.16,0.16,0.19,0.2,0.2,0.23,0.24,0.24,0.24,0.27,0.26,0.23,0.24,0.24,0.22,0.19,0.2,0.22,0.22,0.21,0.22,0.21,0.2,0.18,0.2,0.17,0.11,0.08,0.11,0.11,0.1,0.13,0.13,0.1,0.08,0.1,0.07,0.04,0.02,0.02,-0.07,-0.06,-0.08,-0.12,-0.16,-0.15,-0.18,-0.23,-0.29,-0.27,-0.23,-0.25,-0.3,-0.33,-0.3,-0.38,-0.37,-0.4,-0.4,-0.4,-0.38,-0.34,-0.32,-0.33,-0.35,-0.3,-0.3,-0.3,-0.28,-0.29,-0.32,-0.27,-0.28,-0.31,-0.31]};
+  const SIG = (() => { const dec = b => Uint8Array.from(atob(b), c => c.charCodeAt(0)); return { E: dec(EARRINGS_SIGNAL.E), B: dec(EARRINGS_SIGNAL.B), P: EARRINGS_SIGNAL.P, C: EARRINGS_SIGNAL.C, T: EARRINGS_SIGNAL.T, S: EARRINGS_SIGNAL.S }; })();
+  function songSignal(t) {
+    const i = Math.min(SIG.E.length - 1, Math.max(0, Math.floor(t / 0.01))), j = Math.min(SIG.P.length - 1, Math.max(0, Math.floor(t / 0.1)));
+    return { energy: SIG.E[i] / 255, beat: SIG.B[i] / 255, section: SIG.S[j],
+             tempo: { period: SIG.P[j], confidence: SIG.C[j], beatTime: SIG.T[j] > 0 ? SIG.T[j] : 0 } };
+  }
+  const song = document.getElementById("song");
+  const songLive = () => !song.paused && song.readyState >= 2;
   // A simulated listen of Earrings: a locked tempo, a kick on every beat, and
   // loud/quiet sections every 8 bars, like the live audio Lune hears.
   function earringsSignal(t) {
@@ -1013,7 +1026,9 @@ void main() {
     const m = MODE_CODE[mode] ?? 1;
     const src = (records[current].light || records[current].colors.map(hex).map(c => c.map(v => v / 255)));
     const colors = src.slice(0, Math.min(LUNE.colorCount, src.length));
-    const sig = earringsSignal(t);
+    const live = songLive();
+    if (live) t = song.currentTime;
+    const sig = live ? songSignal(t) : earringsSignal(t);
     updatePulse(laptopEl.classList.contains("playing"), sig);
     anim.step(dt, m, m === 3 ? sig.energy : 0, m === 3 ? sig.beat : 0, colors, animSnap, m === 3 ? sig.tempo : undefined, t, m === 3 ? sig.section : 0);
     animSnap = false;
@@ -1091,7 +1106,242 @@ void main() {
   }
   function label(text, x, y, size, col, align = "center", fam) { ctx.font = font(size, 700, fam); ctx.textAlign = align; ctx.textBaseline = "middle"; ctx.fillStyle = col; ctx.fillText(text, x, y); }
 
+
+  // ---------- Native Design (Vers's newest styles): the song as phone screens ----------
+  // Ported from Vers's NativeDesign.swift: Messages (a bubble per line),
+  // Money (a payment per line), Map (a walk with a pin per line) and
+  // Notifications (lines arriving on a lock screen). Each word lights as sung.
+  const SYS = '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif';
+  const nfont = (size, weight = 400) => `${weight} ${size}px ${SYS}`;
+  const clamp01 = v => Math.max(0, Math.min(1, v));
+  const easeOut = v => 1 - Math.pow(1 - clamp01(v), 3);
+  const easeBack = v => { v = clamp01(v); const c = 1.7; return 1 + (c + 1) * Math.pow(v - 1, 3) + c * Math.pow(v - 1, 2); };
+  const lineCount = lines.length;
+  const lineIdx = li => words.map((w, i) => i).filter(i => words[i].line === li);
+  const lineStart = li => words[lineIdx(li)[0]].start;
+  const lineEnd = li => { const ix = lineIdx(li); return words[ix[ix.length - 1]].end; };
+  const nhash = (i, salt) => { let h = (Math.imul(i, 2654435761) + Math.imul(salt, 40503)) >>> 0; h ^= h >>> 13; h = Math.imul(h, 0x5bd1e995) >>> 0; h ^= h >>> 15; return (h % 10000) / 10000; };
+  function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, Math.min(r, h / 2, w / 2)); }
+  // Wrap a line into rows, then draw it word by word: sung words bright, the rest dim.
+  function wrapWords(li, size, weight, maxW) {
+    ctx.font = nfont(size, weight);
+    const rows = [[]]; let x = 0; const sp = ctx.measureText(" ").width;
+    for (const i of lineIdx(li)) {
+      const w = ctx.measureText(words[i].text).width;
+      if (x > 0 && x + w > maxW) { rows.push([]); x = 0; }
+      rows[rows.length - 1].push({ i, x, w }); x += w + sp;
+    }
+    const width = Math.max(...rows.map(r => r.length ? r[r.length - 1].x + r[r.length - 1].w : 0));
+    return { rows, width, height: rows.length * size * 1.25 };
+  }
+  function paintWords(wr, x, y, size, weight, t, on, off) {
+    ctx.font = nfont(size, weight); ctx.textBaseline = "top"; ctx.textAlign = "left";
+    wr.rows.forEach((row, r) => row.forEach(o => { ctx.fillStyle = words[o.i].start <= t ? on : off; ctx.fillText(words[o.i].text, x + o.x, y + r * size * 1.25); }));
+  }
+  // Where the current line is, and how far into the slide since it began.
+  function nativeNow(t) {
+    let ci = -1; for (let li = 0; li < lineCount; li++) if (lineStart(li) <= t) ci = li;
+    return { ci, slide: ci >= 0 ? easeOut((t - lineStart(ci)) / 0.32) : 0 };
+  }
+  function phoneFrame() {
+    const ph = Math.min(H * 0.9, W * 0.9 / 0.47), pw = ph * 0.47;
+    return { x: W / 2 - pw / 2, y: H / 2 - ph / 2, w: pw, h: ph, s: pw / 100 };
+  }
+  function drawNative(t) {
+    const which = style.replace("Native Design", "").trim() || "Messages";
+    const { ci, slide } = nativeNow(t);
+    if (which === "Messages") return nativeMessages(t, ci, slide);
+    const P = phoneFrame(), s = P.s;
+    ctx.save();
+    rrect(P.x, P.y, P.w, P.h, P.w * 0.13); ctx.save(); ctx.clip();
+    ctx.translate(P.x, P.y);
+    if (which === "Money") nativeMoney(t, ci, slide, P.w, P.h, s);
+    else if (which === "Map") nativeMap(t, ci, P.w, P.h, s);
+    else nativeLock(t, ci, slide, P.w, P.h, s);
+    // Dynamic Island
+    ctx.fillStyle = "#000"; rrect(P.w * 0.35, P.h * 0.018, P.w * 0.3, P.w * 0.085, P.w * 0.0425); ctx.fill();
+    ctx.restore();
+    rrect(P.x, P.y, P.w, P.h, P.w * 0.13); ctx.lineWidth = P.w * 0.014; ctx.strokeStyle = "#383838"; ctx.stroke();
+    ctx.restore();
+  }
+  // Messages float on the screen like Vers's, with no phone around them.
+  function nativeMessages(t, ci, slide) {
+    const s = Math.min(W, H * 1.4) / 100, size = 2.3 * s, pad = 1.6 * s, maxW = Math.min(W * 0.42, 52 * s);
+    const colX = W / 2 - maxW * 0.75, colW = maxW * 1.5;
+    const blue = "#0a84ff", grey = "#2a2a2c";
+    let bottom = H * 0.8;
+    const next = ci + 1 < lineCount ? lineStart(ci + 1) : Infinity;
+    if (next - t < 1.6 && next > t) {
+      const mine = (ci + 1) % 2 === 1, tw = 9 * s, th = 5 * s, x = mine ? colX + colW - tw : colX;
+      ctx.fillStyle = mine ? blue : grey; rrect(x, bottom - th, tw, th, th / 2); ctx.fill();
+      for (let k = 0; k < 3; k++) { ctx.fillStyle = `rgba(255,255,255,${(0.35 + 0.55 * Math.max(0, Math.sin(t * 7 - k * 0.9))).toFixed(2)})`; ctx.beginPath(); ctx.arc(x + 2.6 * s + k * 1.9 * s, bottom - th / 2, 0.6 * s, 0, Math.PI * 2); ctx.fill(); }
+      bottom -= th + 1.2 * s;
+    }
+    // Lift everything by the new bubble's height as it arrives.
+    for (let k = ci; k >= Math.max(0, ci - 6); k--) {
+      const mine = k % 2 === 1, wr = wrapWords(k, size, 400, maxW - pad * 2);
+      const bw = wr.width + pad * 2, bh = wr.height + pad * 1.3;
+      const pop = k === ci ? easeBack((t - lineStart(k)) / 0.35) : 1;
+      const lift = k === ci ? (1 - slide) * (bh + 1.2 * s) * 0.6 : 0;
+      const top = bottom - bh + lift, x = mine ? colX + colW - bw : colX;
+      const fade = clamp01((top - H * 0.1) / (6 * s));
+      ctx.save(); ctx.globalAlpha = fade;
+      ctx.translate(x + (mine ? bw : 0), top + bh); ctx.scale(pop, pop); ctx.translate(-(x + (mine ? bw : 0)), -(top + bh));
+      ctx.fillStyle = mine ? blue : grey; rrect(x, top, bw, bh, Math.min(bh / 2, 2.6 * s)); ctx.fill();
+      paintWords(wr, x + pad, top + pad * 0.65, size, 400, t, "#fff", mine ? "rgba(255,255,255,.45)" : "rgba(255,255,255,.32)");
+      ctx.restore();
+      bottom = top - 0.9 * s - lift;
+    }
+  }
+  const PAY_NAMES = ["Maya", "Jordan", "Theo", "Priya", "Sam", "Lena", "Omar", "Ivy", "Noah", "Zoe", "Ezra", "Ana"];
+  const amountOf = k => Math.round(nhash(k, 9) * 60 + 4) + (nhash(k, 4) > 0.5 ? 0.5 : 0), incomingOf = k => nhash(k, 21) > 0.6;
+  function nativeMoney(t, ci, slide, Wp, Hp, s) {
+    ctx.fillStyle = "#f5f5f7"; ctx.fillRect(0, 0, Wp, Hp);
+    ctx.textBaseline = "top"; ctx.textAlign = "left";
+    ctx.fillStyle = "#000"; ctx.font = nfont(7 * s, 700); ctx.fillText("Activity", 6 * s, Hp * 0.07);
+    ctx.fillStyle = "#737373"; ctx.font = nfont(3.2 * s, 500); ctx.fillText("Balance", 6 * s, Hp * 0.07 + 11 * s);
+    let total = 240; for (let k = 0; k <= ci; k++) total += incomingOf(k) ? amountOf(k) : -amountOf(k);
+    ctx.fillStyle = "#000"; ctx.font = nfont(7 * s, 700); ctx.fillText("$" + total.toFixed(2), 6 * s, Hp * 0.07 + 15 * s);
+    ctx.fillStyle = "#d9d9d9"; ctx.fillRect(0, Hp * 0.07 + 26 * s, Wp, 0.3 * s);
+    if (ci < 0) return;
+    const rowW = Wp - 8 * s, noteW = rowW - 36 * s;
+    let y = Hp * 0.07 + 28 * s;
+    for (let k = ci; k >= Math.max(0, ci - 9); k--) {
+      const wr = wrapWords(k, 3.6 * s, 400, noteW), h = Math.max(15 * s, wr.height + 11 * s);
+      const fresh = k === ci, top = fresh ? y - (1 - slide) * 8 * s : y;
+      ctx.save(); ctx.globalAlpha = fresh ? slide : clamp01((Hp - top) / (20 * s));
+      ctx.fillStyle = "#fff"; rrect(4 * s, top, rowW, h, 3.5 * s); ctx.fill();
+      const name = PAY_NAMES[Math.floor(nhash(k, 2) * PAY_NAMES.length) % PAY_NAMES.length];
+      ctx.fillStyle = `hsl(${Math.round(nhash(k, 2) * 360)} 45% 72%)`; ctx.beginPath(); ctx.arc(4 * s + 7.5 * s, top + 7.5 * s, 4.5 * s, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff"; ctx.font = nfont(4.4 * s, 700); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(name[0], 4 * s + 7.5 * s, top + 7.7 * s);
+      ctx.textAlign = "left"; ctx.textBaseline = "top";
+      ctx.fillStyle = "#000"; ctx.font = nfont(3.6 * s, 600); ctx.fillText(incomingOf(k) ? `${name} paid you` : `You paid ${name}`, 4 * s + 15 * s, top + 3 * s);
+      ctx.textAlign = "right"; ctx.fillStyle = incomingOf(k) ? "#1a9e4d" : "#000";
+      ctx.fillText((incomingOf(k) ? "+" : "−") + "$" + amountOf(k).toFixed(2), 4 * s + rowW - 3 * s, top + 3 * s); ctx.textAlign = "left";
+      paintWords(wr, 4 * s + 15 * s, top + 8 * s, 3.6 * s, 400, t, "#000", "rgba(0,0,0,.28)");
+      ctx.restore();
+      y = top + h + 2 * s;
+    }
+  }
+  // Map: a walk across San Francisco, a pin for every line.
+  let mapPins = null, mapKey = "";
+  function nativeMap(t, ci, Wp, Hp, s) {
+    const block = Wp * 0.26, size = Wp * 5;
+    const key = Wp.toFixed(1);
+    if (mapKey !== key) {
+      mapKey = key; mapPins = [];
+      let p = [block / 2 + block * 3, block / 2 + block * 4], dir = 0;
+      const maxX = size - block * 2, maxY = size - block * 2.2;
+      for (let k = 0; k < Math.max(1, lineCount); k++) {
+        mapPins.push(p.slice());
+        const turn = nhash(k, 31); dir = turn < 0.35 ? (dir + 1) % 4 : turn < 0.6 ? (dir + 3) % 4 : dir;
+        const steps = 1 + Math.floor(nhash(k, 17) * 2); let next = p.slice();
+        for (let n = 0; n < steps; n++) {
+          const d = [[block, 0], [0, block], [-block, 0], [0, -block]][dir], c = [next[0] + d[0], next[1] + d[1]];
+          if (c[0] < block || c[0] > maxX || c[1] < block || c[1] > maxY) { dir = (dir + 2) % 4; continue; }
+          next = c;
+        }
+        p = next;
+      }
+    }
+    const k = Math.max(0, Math.min(ci, mapPins.length - 1));
+    const along = ci >= 0 ? clamp01((t - lineStart(k)) / Math.max(0.3, (lineEnd(k) - lineStart(k)) * 0.6)) : 0;
+    const from = k > 0 ? mapPins[k - 1] : mapPins[0], to = mapPins[k];
+    const here = ci >= 0 ? [from[0] + (to[0] - from[0]) * along, from[1] + (to[1] - from[1]) * along] : mapPins[0];
+    const sheetH = Hp * 0.3;
+    // Map space is y-up in Vers; draw it flipped so the bay sits along the top.
+    const ox = Wp / 2 - here[0], oy = (Hp - sheetH) * 0.55;
+    const X = x => x + ox, Y = y => oy - (y - here[1]);
+    ctx.fillStyle = "#f2f0e8"; ctx.fillRect(0, 0, Wp, Hp);
+    ctx.fillStyle = "#abd4f5"; ctx.fillRect(X(0), Y(size), size, block * 1.6); ctx.fillRect(X(size - block * 1.4), Y(size), block * 1.4, size);
+    ctx.fillStyle = "#c7e6bd"; ctx.fillRect(X(block * 0.3), Y(size * 0.42 + block * 1.2), block * 5, block * 1.2); ctx.fillRect(X(size * 0.55), Y(size * 0.2 + block * 1.2), block * 1.2, block * 1.2);
+    ctx.strokeStyle = "#fff"; ctx.lineWidth = 1.6 * s; ctx.beginPath();
+    for (let x = block / 2; x < size - block * 1.4; x += block) { ctx.moveTo(X(x), Y(0)); ctx.lineTo(X(x), Y(size - block * 1.6)); }
+    for (let y = block / 2; y < size - block * 1.6; y += block) { ctx.moveTo(X(0), Y(y)); ctx.lineTo(X(size - block * 1.4), Y(y)); }
+    ctx.stroke();
+    ctx.strokeStyle = "#ffdb8c"; ctx.lineWidth = 3 * s; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(X(0), Y(size * 0.15)); ctx.lineTo(X(size - block * 1.4), Y(size - block * 1.6)); ctx.stroke();
+    const place = (name, x, y, sz, col, wt = 600) => { ctx.fillStyle = col; ctx.font = nfont(sz, wt); ctx.textAlign = "center"; ctx.textBaseline = "bottom"; ctx.fillText(name, X(x), Y(y)); };
+    place("Market St", size * 0.42, size * 0.52, 3 * s, "#737373"); place("SoMa", size * 0.62, size * 0.4, 4 * s, "#8c8c8c", 700);
+    place("Mission", size * 0.3, size * 0.18, 4 * s, "#8c8c8c", 700); place("Hayes Valley", size * 0.2, size * 0.62, 3.4 * s, "#8c8c8c", 700);
+    place("Golden Gate Park", block * 2.8, size * 0.42 + block * 0.5, 3 * s, "#4d8c4d"); place("San Francisco Bay", size * 0.5, size - block * 0.9, 3.6 * s, "#4d80bf");
+    place("Embarcadero", size - block * 1.9, size * 0.7, 3 * s, "#737373");
+    if (ci >= 0) {
+      ctx.strokeStyle = "#0a84ff"; ctx.lineWidth = 2.6 * s; ctx.lineJoin = "round"; ctx.beginPath(); ctx.moveTo(X(mapPins[0][0]), Y(mapPins[0][1]));
+      for (let j = 1; j < k; j++) ctx.lineTo(X(mapPins[j][0]), Y(mapPins[j][1]));
+      if (k > 0) ctx.lineTo(X(here[0]), Y(here[1])); ctx.stroke();
+      for (let j = Math.max(0, k - 14); j <= k; j++) {
+        const reached = j < k || along >= 1, sc = reached ? (j === k ? easeBack((t - lineStart(k)) / 0.5 - 0.6) * 1.25 : 0.85) : 0;
+        if (sc <= 0.01) continue;
+        const px = X(mapPins[j][0]), py = Y(mapPins[j][1]), r = 2.8 * s * sc;
+        ctx.fillStyle = "#f24040"; ctx.beginPath(); ctx.arc(px, py - r * 1.6, r, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(px - r * 0.55, py - r * 1.1); ctx.lineTo(px, py); ctx.lineTo(px + r * 0.55, py - r * 1.1); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(px, py - r * 1.6, r * 0.38, 0, Math.PI * 2); ctx.fill();
+      }
+    }
+    ctx.fillStyle = "#0a84ff"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 0.9 * s; ctx.shadowColor = "rgba(0,0,0,.3)"; ctx.shadowBlur = 1.5 * s;
+    ctx.beginPath(); ctx.arc(X(here[0]), Y(here[1]), 2.5 * s, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); ctx.shadowBlur = 0;
+    // Bottom sheet: the stop and the line, lit word by word.
+    ctx.shadowColor = "rgba(0,0,0,.18)"; ctx.shadowBlur = 3 * s; ctx.fillStyle = "#fff"; rrect(3 * s, Hp - sheetH, Wp - 6 * s, sheetH - 3 * s, 6 * s); ctx.fill(); ctx.shadowBlur = 0;
+    ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillStyle = "#737373"; ctx.font = nfont(3.2 * s, 500);
+    ctx.fillText(ci >= 0 ? `Stop ${k + 1}  ·  ${(k * 0.18 + along * 0.18).toFixed(1)} mi walked` : "Walking tour · San Francisco", 8 * s, Hp - sheetH + 5 * s);
+    if (ci >= 0) paintWords(wrapWords(k, 5 * s, 600, Wp - 16 * s), 8 * s, Hp - sheetH + 11 * s, 5 * s, 600, t, "#000", "rgba(0,0,0,.25)");
+    else { ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.font = nfont(5 * s, 600); ctx.fillText("Press play to start the walk", 8 * s, Hp - sheetH + 11 * s); }
+  }
+  // Notifications: lines arrive on a lock screen.
+  function nativeLock(t, ci, slide, Wp, Hp, s) {
+    const g = ctx.createLinearGradient(0, Hp, Wp, 0);
+    g.addColorStop(0, "rgb(41,26,92)"); g.addColorStop(0.5, "rgb(13,59,115)"); g.addColorStop(1, "rgb(107,38,97)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, Wp, Hp);
+    const now = new Date();
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    ctx.fillStyle = "rgba(255,255,255,.85)"; ctx.font = nfont(3.8 * s, 600); ctx.fillText(now.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" }), Wp / 2, Hp * 0.08);
+    ctx.fillStyle = "#fff"; ctx.font = nfont(20 * s, 600); ctx.fillText(now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }).replace(/\s?[AP]M/, ""), Wp / 2, Hp * 0.08 + 5 * s);
+    // Now-playing widget
+    const wy = Hp * 0.08 + 32 * s;
+    ctx.fillStyle = "rgba(255,255,255,.16)"; rrect(6 * s, wy, Wp - 12 * s, 19 * s, 5 * s); ctx.fill();
+    const ag = ctx.createLinearGradient(9 * s, wy + 3 * s, 22 * s, wy + 16 * s); ag.addColorStop(0, "#ff375f"); ag.addColorStop(1, "#ff9f0a");
+    ctx.fillStyle = ag; rrect(9 * s, wy + 3 * s, 13 * s, 13 * s, 2.5 * s); ctx.fill();
+    const r = records[current];
+    ctx.textAlign = "left"; ctx.fillStyle = "#fff"; ctx.font = nfont(3.6 * s, 600); ctx.fillText(r.name, 25 * s, wy + 3.5 * s);
+    ctx.fillStyle = "rgba(255,255,255,.7)"; ctx.font = nfont(3.2 * s, 400); ctx.fillText(r.artist || "Example colours", 25 * s, wy + 8.5 * s);
+    ctx.fillStyle = "rgba(255,255,255,.25)"; rrect(25 * s, wy + 15 * s, Wp - 34 * s, 1 * s, 0.5 * s); ctx.fill();
+    ctx.fillStyle = "#fff"; rrect(25 * s, wy + 15 * s, Math.max(s, (Wp - 34 * s) * clamp01(t / loop)), 1 * s, 0.5 * s); ctx.fill();
+    if (ci < 0) return;
+    const cardW = Wp - 8 * s, textW = cardW - 20 * s;
+    let y = Hp * 0.08 + 56 * s;
+    const shown = []; for (let k = ci; k >= Math.max(0, ci - 5); k--) shown.push(k);
+    // Draw back to front so the newest card sits on top.
+    const placed = shown.map((k, n) => {
+      const wr = wrapWords(k, 3.6 * s, 400, textW), h = wr.height + 12 * s, full = n < 3;
+      const depth = Math.max(0, n - 2);
+      const top = full ? y : y - h + depth * 2.2 * s;
+      const out = { k, n, wr, h, full, depth, top };
+      if (full) y += h + 2 * s;
+      return out;
+    });
+    for (const c of placed.reverse()) {
+      const fresh = c.k === ci;
+      const top = c.top - (fresh ? (1 - slide) * 10 * s : 0);
+      const sc = c.full ? (fresh ? 0.8 + 0.2 * easeBack((t - lineStart(ci)) / 0.4) : 1) : 1 - c.depth * 0.05;
+      ctx.save();
+      ctx.globalAlpha = c.full ? (fresh ? slide : 1) : Math.max(0, 0.7 - c.depth * 0.2);
+      ctx.translate(Wp / 2, top + c.h / 2); ctx.scale(sc, sc); ctx.translate(-Wp / 2, -(top + c.h / 2));
+      ctx.fillStyle = "rgba(255,255,255,.2)"; rrect(4 * s, top, cardW, c.h, 5 * s); ctx.fill();
+      if (c.full) {
+        ctx.fillStyle = "#fa3d66"; rrect(7 * s, top + 3 * s, 9 * s, 9 * s, 2.2 * s); ctx.fill();
+        ctx.fillStyle = "#fff"; ctx.font = nfont(5.5 * s, 600); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("♪", 11.5 * s, top + 7.6 * s);
+        ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.font = nfont(2.9 * s, 600); ctx.fillText("VERS · Lyrics", 19 * s, top + 3 * s);
+        const ago = Math.floor(Math.max(0, t - lineStart(c.k)));
+        ctx.textAlign = "right"; ctx.fillStyle = "rgba(255,255,255,.6)"; ctx.font = nfont(2.9 * s, 400); ctx.fillText(ago < 5 ? "now" : `${ago}s ago`, 4 * s + cardW - 3 * s, top + 3 * s);
+        ctx.textAlign = "left";
+        paintWords(c.wr, 19 * s, top + 7.6 * s, 3.6 * s, 400, t, "#fff", "rgba(255,255,255,.4)");
+      }
+      ctx.restore();
+    }
+  }
+
   function drawLyrics(t) {
+    if (style.startsWith("Native Design")) { ctx.save(); drawNative(t); ctx.restore(); return; }
     let cur = -1; for (let i = 0; i < words.length; i++) if (words[i].start <= t) cur = i;
     if (cur < 0) return;
     const base = Math.min(H * 0.085, 64), li = words[cur].line, idx = lineWords(li);
@@ -1218,6 +1468,7 @@ void main() {
     const playing = laptopEl.classList.contains("playing");
     const dt = playing ? real : 0;
     playClock += dt;
+    if (songLive()) playClock = song.currentTime;
     for (let i = 0; i < palette.length; i++) palette[i] = mix(palette[i], target[i], Math.min(1, real / 0.35));
     if (W > 0) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1239,6 +1490,7 @@ void main() {
   let swapping = Promise.resolve();
   play.addEventListener("click", () => {
     const on = laptopEl.classList.toggle("playing");
+    if (on) song.play().catch(() => {}); else song.pause();
     play.setAttribute("aria-label", on ? "Pause the demo" : "Play the demo");
     swapping = swapping.then(async () => {
       if (calm) { ico.innerHTML = on ? PAUSE : PLAY; lab.textContent = on ? "Pause" : "See it in action"; return; }
