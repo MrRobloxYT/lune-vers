@@ -19,9 +19,9 @@
   --hairline: #2a2635;
   --ink: #ece8f2;            /* body text */
   --dim: #9a93aa;            /* secondary text */
-  --glow: #8b6cff;           /* set by the chosen record */
-  --glow-2: #c7b8ff;
-  --glow-3: #3c2a8a;
+  --glow: #e8679f;           /* set by the chosen record (Earrings by default) */
+  --glow-2: #f6bdd6;
+  --glow-3: #d9773f;
   --display: "Gloock", "Iowan Old Style", "Times New Roman", serif;
   --body: "Hanken Grotesk", "Helvetica Neue", Arial, sans-serif;
   --mono: "Martian Mono", "SF Mono", Menlo, Consolas, monospace;
@@ -76,8 +76,9 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .stage { display: grid; gap: 16px; }
 .laptop { position: relative; max-width: 100%; aspect-ratio: 1512 / 982; border-radius: 22px; background: #050407; border: 10px solid #1a1820; box-shadow: 0 40px 120px -40px color-mix(in srgb, var(--glow) 55%, transparent), 0 0 0 1px #2d2a36; overflow: hidden; transition: box-shadow .8s; }
 .laptop canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.laptop #light { pointer-events: none; }
 .laptop .notch { position: absolute; left: 50%; top: 0; width: 12.2%; height: 3.3%; transform: translateX(-50%); background: #050407; border-radius: 0 0 10px 10px; z-index: 2; }
-.screen-caption { position: absolute; left: 14px; bottom: 12px; z-index: 3; font: 400 11px var(--mono); color: color-mix(in srgb, var(--ink) 55%, transparent); }
+.screen-caption { white-space: pre; position: absolute; left: 14px; bottom: 12px; z-index: 3; font: 400 11px var(--mono); color: color-mix(in srgb, var(--ink) 55%, transparent); }
 .controls { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; align-items: center; }
 .controls .label { white-space: nowrap; }
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
@@ -90,14 +91,14 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .records { padding-block: 40px 20px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 36px; align-items: center; border-top: 1px solid var(--hairline); }
 .records h2 { font-size: clamp(30px, 4vw, 44px); line-height: 1.05; }
 .records p { color: var(--dim); margin-top: 12px; max-width: 42ch; }
-.crate { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.crate { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; }
 .record { appearance: none; border: 0; padding: 0; background: none; cursor: pointer; text-align: left; color: var(--dim); display: grid; gap: 8px; font: 400 12px var(--mono); }
 .record .cover { aspect-ratio: 1; border-radius: 6px; box-shadow: 0 10px 30px -12px #000; position: relative; overflow: hidden; transition: transform .25s; }
 .record .cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg, #ffffff22, transparent 40%); }
 .record:hover .cover { transform: translateY(-3px) rotate(-1deg); }
 .record[aria-pressed="true"] { color: var(--ink); }
 .record[aria-pressed="true"] .cover { outline: 2px solid var(--ink); outline-offset: 3px; }
-@media (max-width: 860px) { .records { grid-template-columns: 1fr; } .crate { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 860px) { .records { grid-template-columns: 1fr; } .crate { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* ---------- Sides (track lists) ---------- */
 .side { padding-block: 70px 30px; border-top: 1px solid var(--hairline); display: grid; grid-template-columns: 300px 1fr; gap: 48px; }
@@ -223,6 +224,68 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-event
 .dl:hover::after { right: -120px; opacity: .8; }
 @media (prefers-reduced-motion: reduce) { .rim, .rim::after, .hero h1 .sung, .lyricline .track-run, .record .x { animation: none !important; } }
 
+
+/* The demo screen: a Mac desktop (1512 x 982 pt) with Lune's player open, scaled to fit. */
+.mac { position: absolute; left: 0; top: 0; width: 1512px; height: 982px; transform-origin: 0 0; transform: scale(var(--pt, .7)); z-index: 1; pointer-events: none;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+.mac svg { display: block; flex: none; }
+.menubar { position: absolute; inset: 0 0 auto; height: 32px; display: flex; align-items: center; justify-content: space-between; padding: 0 14px 0 20px; font-size: 13px; }
+.mb-left, .mb-right { display: flex; align-items: center; gap: 19px; }
+.mb-left b { font-weight: 700; margin-left: 2px; }
+.mb-right { gap: 16px; font-weight: 500; }
+.player { position: absolute; left: 251px; top: 154px; width: 1010px; height: 705px; border-radius: 12px; overflow: hidden;
+  background: rgb(38 36 40 / .62); backdrop-filter: blur(34px) saturate(1.7); -webkit-backdrop-filter: blur(34px) saturate(1.7);
+  box-shadow: 0 0 0 .5px rgb(0 0 0 / .9), 0 30px 80px rgb(0 0 0 / .55);
+  transition: opacity .55s cubic-bezier(.22,1,.36,1), transform .55s cubic-bezier(.22,1,.36,1); }
+.player::before { content: ""; position: absolute; inset: 0; background: linear-gradient(#ffffff17, #ffffff08 50%, #ffffff04), rgb(13 11 13 / .12); }
+.player::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: linear-gradient(#ffffff47, #ffffff0d);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+.mac.lyrics .player { opacity: 0; transform: translateY(40px) scale(.94); }
+.pl-lights { position: absolute; left: 20px; top: 19px; display: flex; gap: 8px; z-index: 2; }
+.pl-lights i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; box-shadow: inset 0 0 0 .5px #0003; }
+.pl-lights i:nth-child(2) { background: #febc2e; } .pl-lights i:nth-child(3) { background: #28c840; }
+.pl-glow { position: absolute; inset: 0; background: radial-gradient(circle calc(420px + 50px * var(--pulse, 0)) at 50% 32%,
+  rgb(var(--album) / calc(.2 + .12 * var(--pulse, 0))) 30px, rgb(var(--album) / calc(.05 + .03 * var(--pulse, 0))) 55%, transparent 100%); }
+.pl-body { position: relative; height: 100%; display: flex; flex-direction: column; align-items: center; padding-top: 90px; }
+.pl-cover { position: relative; width: 270px; height: 270px; flex: none;
+  transform: scale(var(--cover, .965)); transition: transform .6s cubic-bezier(.34,1.3,.64,1); }
+.pl-frame { position: relative; z-index: 1; width: 100%; height: 100%; padding: 10px; border-radius: 26px; background: rgb(255 255 255 / .06);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .34), inset 0 0 0 1px rgb(255 255 255 / .08), 0 0 calc(30px + 16px * var(--pulse, 0)) rgb(var(--album) / calc(.4 + .25 * var(--pulse, 0))); }
+.pl-art { width: 100%; height: 100%; border-radius: 16px; background-size: cover; }
+/* Lune's "venom": the song's colour oozing out from behind the cover. */
+.pl-ooze { position: absolute; inset: -40px; z-index: 0; filter: blur(26px); opacity: calc(.55 + .35 * var(--pulse, 0)); }
+.pl-ooze i { position: absolute; width: 46%; height: 46%; border-radius: 50%; background: rgb(var(--album) / .75); animation: ooze 7s ease-in-out infinite alternate; }
+.pl-ooze i:nth-child(1) { left: 0; top: 4%; } .pl-ooze i:nth-child(2) { right: 0; top: 30%; animation-delay: -2.3s; animation-duration: 8.5s; } .pl-ooze i:nth-child(3) { left: 26%; bottom: 0; animation-delay: -4.6s; animation-duration: 6.4s; }
+@keyframes ooze { from { transform: translate(-6%, 4%) scale(.9); } to { transform: translate(6%, -5%) scale(1.12); } }
+.pl-title { margin-top: 30px; font-size: 21px; font-weight: 600; }
+.pl-artist { margin-top: 5px; font-size: 15px; color: rgb(235 235 245 / .6); }
+.pl-transport { margin-top: 24px; display: flex; align-items: center; gap: 12px; }
+.pill, .glass { display: grid; place-items: center; color: rgb(255 255 255 / .92); border-radius: 999px; position: relative;
+  background: rgb(255 255 255 / .07); box-shadow: inset 0 1px 0 rgb(255 255 255 / .3), inset 0 0 0 1px rgb(255 255 255 / .07); }
+.glass { background: rgb(255 255 255 / .08); box-shadow: inset 0 1px 0 rgb(255 255 255 / .34), inset 0 0 0 1px rgb(255 255 255 / .06); }
+.pill.on { background: rgb(255 255 255 / .16); }
+.c44 { width: 44px; height: 44px; } .c58 { width: 58px; height: 58px; } .c44b { width: 44px; height: 44px; }
+.cap38 { margin-top: 18px; height: 38px; padding: 0 16px; display: flex; gap: 7px; font-size: 14px; font-weight: 500; }
+.cap44 { height: 44px; padding: 0 18px; font-size: 15px; font-weight: 500; }
+.pl-bar { margin-top: auto; margin-bottom: 26px; display: flex; align-items: center; gap: 10px; }
+.laptop .notch { z-index: 3; }
+.laptop #light { z-index: 2; }
+@media (prefers-reduced-motion: reduce) { .pl-ooze i { animation: none; } }
+
+/* Demo window: tilts toward the pointer, play pill in the middle (like Lumn's video). */
+.laptop { will-change: transform; transform: perspective(1600px); }
+.play-wrap { position: absolute; inset: 0; z-index: 4; display: grid; place-items: center; pointer-events: none; }
+.play { pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 8px 24px 8px 8px; border: 0; border-radius: 999px; overflow: hidden; white-space: nowrap;
+  background: rgb(0 0 0 / .72); color: #fff; box-shadow: 0 0 0 1px rgb(255 255 255 / .1); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  font: 600 18px var(--body); cursor: pointer; transition: transform .45s var(--spring-pop), opacity .5s cubic-bezier(.22,1,.36,1), background-color .25s; }
+.play:hover { transform: scale(1.04); background: rgb(0 0 0 / .85); }
+.play:active { transform: scale(.97); }
+.play-ico { width: 40px; height: 40px; flex: none; border-radius: 50%; background: rgb(255 255 255 / .22); display: grid; place-items: center; }
+.play-ico svg { display: block; }
+.laptop.playing:not(:hover) .play { opacity: 0; transform: scale(.92); }
+@media (max-width: 640px) { .play { font-size: 16px; gap: 10px; padding: 6px 20px 6px 6px; } .play-ico { width: 36px; height: 36px; } }
+@media (hover: none) { .laptop.playing .play { opacity: 0; transform: scale(.92); } .laptop.playing .play:focus-visible { opacity: 1; } }
+
 /* ---------- Motion: cursor dot, entrances, springy hovers ---------- */
 :root { --spring: cubic-bezier(.22,1,.36,1); --spring-pop: cubic-bezier(.34,1.4,.64,1); }
 html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
@@ -279,8 +342,34 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
     <div class="stage rise" style="animation-delay:520ms">
       <div class="laptop" id="laptop">
         <canvas id="screen" aria-label="Live demo of Lune's edge light and Vers's lyrics"></canvas>
+        <div class="mac" id="mac" aria-hidden="true">
+          <div class="menubar">
+            <div class="mb-left"><svg viewBox="0 0 17 20" width="14" height="16" fill="currentColor"><path d="M14.1 10.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9C3.6 4.8 2 5.8 1.1 7.4c-1.8 3.2-.5 7.9 1.3 10.5.9 1.3 1.9 2.7 3.2 2.6 1.3 0 1.8-.8 3.3-.8s2 .8 3.4.8c1.4 0 2.3-1.3 3.1-2.6 1-1.5 1.4-2.9 1.4-3-.1 0-2.7-1-2.7-4.3zM11.6 3c.7-.9 1.2-2 1-3.2-1 0-2.3.7-3 1.6-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.5z"/></svg><b>Lune</b><span>File</span><span>Edit</span><span>View</span><span>Window</span><span>Help</span></div>
+            <div class="mb-right"><svg viewBox="0 0 20 15" width="17" height="13" fill="currentColor"><path d="M10 14.5l2.6-2.9a3.6 3.6 0 0 0-5.2 0zM4.8 9l1.6 1.8a5.1 5.1 0 0 1 7.2 0L15.2 9a7.4 7.4 0 0 0-10.4 0zM2.1 6l1.6 1.8a8.9 8.9 0 0 1 12.6 0L17.9 6A11.2 11.2 0 0 0 2.1 6zM-.6 3l1.6 1.8a12.7 12.7 0 0 1 18 0L20.6 3a15 15 0 0 0-21.2 0z"/></svg><svg viewBox="0 0 27 13" width="25" height="12"><rect x=".5" y=".5" width="23" height="12" rx="3.5" fill="none" stroke="currentColor" opacity=".45"/><rect x="2" y="2" width="17" height="9" rx="2" fill="currentColor"/><path d="M25 4.5v4c.8-.3 1.3-1 1.3-2s-.5-1.7-1.3-2z" fill="currentColor" opacity=".45"/></svg><svg viewBox="0 0 18 16" width="15" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="16" height="6" rx="3"/><circle cx="13.5" cy="4" r="1.4" fill="currentColor"/><rect x="1" y="9" width="16" height="6" rx="3"/><circle cx="4.5" cy="12" r="1.4" fill="currentColor"/></svg><span id="mb-clock">Thu Nov 27 9:41 PM</span></div>
+          </div>
+          <div class="player" id="player">
+            <div class="pl-lights"><i></i><i></i><i></i></div>
+            <div class="pl-glow"></div>
+            <div class="pl-body">
+              <div class="pl-cover"><div class="pl-ooze"><i></i><i></i><i></i></div><div class="pl-frame"><div class="pl-art" id="pl-art"></div></div></div>
+              <div class="pl-title" id="pl-title">Earrings</div>
+              <div class="pl-artist" id="pl-artist">Malcolm Todd</div>
+              <div class="pl-transport">
+                <span class="pill c44"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3"/><path d="M6.7 2.8v3.9h3.9"/><text x="12" y="15.3" font-size="7.4" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" font-family="-apple-system,Helvetica,Arial">15</text></svg></span><span class="pill c44"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M11.5 5.3v13.4L1.8 12zM22.2 5.3v13.4L12.5 12z"/></svg></span><span class="pill c58" id="pl-pp"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M7 4.2 19.4 12 7 19.8Z"/></svg></span><span class="pill c44"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12.5 5.3v13.4l9.7-6.7zM1.8 5.3v13.4l9.7-6.7z"/></svg></span><span class="pill c44"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19.5 12a7.5 7.5 0 1 1-2.2-5.3"/><path d="M17.3 2.8v3.9h-3.9"/><text x="12" y="15.3" font-size="7.4" font-weight="700" text-anchor="middle" fill="currentColor" stroke="none" font-family="-apple-system,Helvetica,Arial">15</text></svg></span>
+              </div>
+              <span class="pill cap38"><svg viewBox="0 0 24 22" width="15" height="14" fill="currentColor"><path d="M12 1C5.9 1 1 4.9 1 9.8c0 2.6 1.4 5 3.7 6.6L3.6 21l5-2.7c1.1.3 2.2.4 3.4.4 6.1 0 11-3.9 11-8.9S18.1 1 12 1zM8.3 12.6c-1.2 0-2-.9-2-2.2 0-1.8 1.3-3.2 3-3.6l.4.8c-.9.3-1.5 1-1.6 1.8 1.1 0 1.9.7 1.9 1.6s-.8 1.6-1.7 1.6zm6.2 0c-1.2 0-2-.9-2-2.2 0-1.8 1.3-3.2 3-3.6l.4.8c-.9.3-1.5 1-1.6 1.8 1.1 0 1.9.7 1.9 1.6s-.8 1.6-1.7 1.6z"/></svg>Lyrics</span>
+              <div class="pl-bar">
+                <span class="glass c44b"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M12 2a10 10 0 0 0 0 20c1.2 0 1.8-.9 1.8-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8h2.1A5.3 5.3 0 0 0 22 10.7C22 5.9 17.5 2 12 2zM6.5 12.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg></span><span class="glass c44b"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 10v4M7 7v10M11 4v16M15 8v8M19 6v12M23 11v2"/></svg></span><span class="glass c44b"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2V18h6v-1.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2zM9 19.5h6v.8a1.7 1.7 0 0 1-1.7 1.7h-2.6A1.7 1.7 0 0 1 9 20.3z"/></svg></span>
+                <span class="pill cap44">Settings</span>
+                <span class="glass c44b"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="4" width="19" height="13" rx="2"/><path d="M8.5 21h7M12 17v4"/></svg></span><span class="pill c44b on"><svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><path d="M12 2.5S5 10.2 5 15a7 7 0 0 0 14 0c0-4.8-7-12.5-7-12.5z"/></svg></span><span class="pill c44b"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="3.5" width="19" height="13" rx="2"/><path d="M8.5 21h7M12 16.5V21"/><rect x="9.3" y="9" width="5.4" height="4" rx=".8" fill="currentColor" stroke="none"/><path d="M10.4 9V7.6a1.6 1.6 0 0 1 3.2 0V9" stroke-width="1.4"/></svg></span><span class="pill c44b"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 4h6v6M20 4l-6.5 6.5M10 20H4v-6M4 20l6.5-6.5"/></svg></span><span class="pill c44b"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 8.5h19"/></svg></span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <canvas id="light" aria-hidden="true"></canvas>
         <div class="notch" aria-hidden="true"></div>
-        <div class="screen-caption" id="caption">Lune · Default — Vers · Constellation</div>
+        <div class="play-wrap"><button class="play" id="play" type="button" aria-label="Play the demo"><span class="play-ico" id="play-ico"><svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style="margin-left:2px"><path d="M7 4.2 19.4 12 7 19.8Z"/></svg></span><span class="play-label" id="play-label">See it in action</span></button></div>
+        <div class="screen-caption" id="caption">♪ Earrings · Malcolm Todd   Lune · Music Sync — Vers · Constellation</div>
       </div>
       <div class="controls">
         <span class="label" id="l-light">Lune light</span>
@@ -510,6 +599,8 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
 (() => {
   // ---------- Records: example album palettes ----------
   const records = [
+    // Preview song: colours taken from the Sweet Boy cover (pink floral wallpaper, orange flowers).
+    { name: "Earrings", artist: "Malcolm Todd", light: [[0.8500, 0.3534, 0.4019], [0.7200, 0.2350, 0.1914], [0.7200, 0.3301, 0.1914]], colors: ["#e8679f", "#f6bdd6", "#d9773f"], cover: "radial-gradient(circle at 28% 30%, #f6bdd6 0 9%, transparent 10%), radial-gradient(circle at 72% 62%, #d9773f 0 8%, transparent 9%), radial-gradient(circle at 60% 22%, #e8679f 0 7%, transparent 8%), radial-gradient(circle at 25% 78%, #e8679f 0 9%, transparent 10%), linear-gradient(160deg, #f3c9d8, #d98aa6 55%, #7a3f4c)" },
     { name: "Violet Hour", colors: ["#8b6cff", "#c7b8ff", "#3c2a8a"], cover: "radial-gradient(circle at 30% 30%, #c7b8ff, #6a4bff 45%, #1d1240 80%)" },
     { name: "Gold Room", colors: ["#f2b45a", "#ffe1a8", "#7a4a12"], cover: "conic-gradient(from 200deg at 60% 40%, #3b2208, #f2b45a, #ffe1a8, #7a4a12, #3b2208)" },
     { name: "Red Static", colors: ["#ff4d5e", "#ffb3a8", "#5c0f1a"], cover: "repeating-linear-gradient(115deg, #ff4d5e 0 14px, #2a0a10 14px 22px, #ffb3a8 22px 26px)" },
@@ -527,7 +618,19 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
     b.addEventListener("click", () => pickRecord(i));
     crate.appendChild(b);
   });
+  let current = 0;
+  const mac = document.getElementById("mac");
+  function updatePlayer() {
+    const r = records[current], c0 = r.light ? r.light[0].map(v => Math.round(v * 255)) : hex(r.colors[0]);
+    mac.style.setProperty("--album", c0.join(" "));
+    document.getElementById("pl-art").style.background = r.cover;
+    document.getElementById("pl-title").textContent = r.name;
+    document.getElementById("pl-artist").textContent = r.artist || "Example colours";
+  }
   function pickRecord(i) {
+    current = i;
+    updatePlayer();
+    if (typeof caption === "function" && document.getElementById("caption")) caption();
     [...crate.children].forEach((b, k) => b.setAttribute("aria-pressed", k === i));
     target = records[i].colors.map(hex);
     const s = document.documentElement.style;
@@ -552,7 +655,7 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
   // ---------- Controls ----------
   const modes = ["Default", "Music Sync", "Idle", "No Animation"];
   const styles = ["Constellation", "Branches", "Web", "Codestyle", "Codestyle Visual", "Visual", "Ship", "Fisheye", "Fisheye Visual"];
-  let mode = "Default", style = "Constellation";
+  let mode = "Music Sync", style = "Constellation";
   function chips(id, list, get, set) {
     const host = document.getElementById(id);
     list.forEach(name => {
@@ -563,10 +666,11 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
       host.appendChild(b);
     });
   }
-  chips("modes", modes, () => mode, v => mode = v);
-  chips("styles", styles, () => style, v => { style = v; resetStyle(); });
+  chips("modes", modes, () => mode, v => { mode = v; mac.classList.remove("lyrics"); });
+  chips("styles", styles, () => style, v => { style = v; resetStyle(); mac.classList.add("lyrics"); });
   const cap = document.getElementById("caption");
-  function caption() { cap.textContent = `Lune · ${mode} — Vers · ${style}`; }
+  function caption() { const r = records[current]; cap.textContent = (r.artist ? `♪ ${r.name} · ${r.artist}   ` : "") + `Lune · ${mode} — Vers · ${style}`; }
+  pickRecord(0);
 
   document.querySelectorAll(".copy").forEach(btn => btn.addEventListener("click", async () => {
     const code = document.getElementById(btn.dataset.copy);
@@ -633,6 +737,300 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
     push(nr + 2, T + 2);
     let s = 0; return pts.map((p, i) => { if (i) s += Math.hypot(p[0] - pts[i - 1][0], p[1] - pts[i - 1][1]); return [p[0], p[1], s]; });
   }
+
+
+  // ---------- Lune's real light (WebGL port of the app's Metal shader) ----------
+  // Same shader, same Music Sync timing (GlowAnimator) and the owner's own
+  // settings: thickness 0.11, glow 0.21, two album colours. The screen is a
+  // 1512 x 982 pt MacBook display with its 185 x 32 pt notch.
+  const LUNE = { W: 1512, H: 982, corner: 11, notchW: 185, notchH: 32, thickness: 1 + 0.10665952620967742 * 17, glow: 0.21080024735499361 * 30, colorCount: 2,
+    earringsBeat: 0.388 };   // Earrings by Malcolm Todd: one beat every 0.388 s (~155 BPM)
+  const MODE_CODE = { "No Animation": 0, "Default": 1, "Idle": 2, "Music Sync": 3 };
+  const TUNING = { 0: [0, 0, 0], 1: [0.22, 1.0, 0.55], 2: [0.08, 0.25, 0.22], 3: [0.465, 0.9, 0.3] };
+  const SURGE = [1, 1.64, 2.94, 3.85, 4.0, 2.35, 1.19, 1, 1];
+  function weightsFor(n) { return n === 1 ? [1, 0, 0, 0] : n === 2 ? [0.6, 0.4, 0, 0] : n === 3 ? [0.4, 0.3, 0.3, 0] : [0.25, 0.25, 0.25, 0.25]; }
+  class GlowAnimator {
+    constructor() { Object.assign(this, { colorPhase: 0, wavePhase: 0, breath: 0, beat: 0, flowBoost: 0, onsetAge: 10, beatClock: 0, beatInterval: 0.388, beatHigh: false, beatGaps: [], energy: 0, drive: 0, colors: [] }); }
+    step(dt, mode, energyTarget, beatTarget, palette, snap, tempo = { period: 0, confidence: 0, beatTime: 0 }, now = 0, sectionTarget = 0) {
+      const t = TUNING[mode];
+      const bt = beatTarget > this.beat ? 0.04 : 0.22;
+      this.beat += (beatTarget - this.beat) * (1 - Math.exp(-dt / bt));
+      const et = energyTarget > this.energy ? 0.06 : 0.3;
+      this.energy += (energyTarget - this.energy) * (1 - Math.exp(-dt / et));
+      this.drive += ((mode === 3 ? sectionTarget : 0) - this.drive) * (1 - Math.exp(-dt / 0.8));
+      const music = mode === 3 ? 1 : 0;
+      if (mode === 3) {
+        this.onsetAge += dt; this.beatClock += dt;
+        if (this.beatClock >= this.beatInterval) this.beatClock -= this.beatInterval;
+        const rising = beatTarget > 0.5 && !this.beatHigh;
+        this.beatHigh = beatTarget > 0.4;
+        const locked = tempo.confidence > 0.3 && tempo.period > 0.2 && tempo.beatTime > 0;
+        if (locked) {
+          let p = tempo.period; while (p > 0.75) p /= 2; while (p < 0.333) p *= 2;
+          this.beatInterval += (p - this.beatInterval) * Math.min(1, dt * 3);
+          const since = now - tempo.beatTime;
+          const want = since - Math.floor(since / this.beatInterval) * this.beatInterval;
+          let error = want - this.beatClock;
+          if (error > this.beatInterval / 2) error -= this.beatInterval;
+          if (error < -this.beatInterval / 2) error += this.beatInterval;
+          this.beatClock += error * Math.min(1, dt * 4);
+          if (this.beatClock < 0) this.beatClock += this.beatInterval;
+          if (this.beatClock >= this.beatInterval) this.beatClock -= this.beatInterval;
+        }
+        if (!locked && rising && this.onsetAge > Math.max(0.25, this.beatInterval * 0.7)) {
+          if (this.onsetAge < 1.5) {
+            this.beatGaps.push(this.onsetAge); if (this.beatGaps.length > 8) this.beatGaps.shift();
+            const sorted = this.beatGaps.slice().sort((a, b) => a - b);
+            let gap = sorted[sorted.length >> 1]; while (gap > 0.75) gap /= 2; while (gap < 0.333) gap *= 2;
+            this.beatInterval = Math.min(0.75, Math.max(0.333, gap));
+          }
+          this.onsetAge = 0;
+          const error = this.beatClock < this.beatInterval / 2 ? this.beatClock : this.beatClock - this.beatInterval;
+          this.beatClock -= error * 0.6; if (this.beatClock < 0) this.beatClock += this.beatInterval;
+        }
+        const tau = this.beatClock < this.beatInterval / 2 ? this.beatClock : this.beatClock - this.beatInterval;
+        const pos = (tau + 0.10) / 0.04, k = Math.floor(pos), f = pos - k;
+        const c = i => SURGE[Math.min(Math.max(i, 0), SURGE.length - 1)];
+        const shape = (pos < 0 || k >= SURGE.length - 1) ? 1 : Math.max(1, 0.5 * ((2 * c(k)) + (-c(k - 1) + c(k + 1)) * f
+          + (2 * c(k - 1) - 5 * c(k) + 4 * c(k + 1) - c(k + 2)) * f * f + (-c(k - 1) + 3 * c(k) - 3 * c(k + 1) + c(k + 2)) * f * f * f));
+        const glide = 0.18 / (this.beatInterval + 0.408);
+        this.colorPhase += dt * glide * (1 + (shape - 1) * (1 + 0.3 * this.drive));
+      } else this.colorPhase += dt * t[0];
+      this.flowBoost += ((music * (this.energy * 0.35 + this.beat * 0.25)) - this.flowBoost) * (1 - Math.exp(-dt / 0.6));
+      this.wavePhase += dt * (t[1] + this.flowBoost);
+      this.breath += dt * (mode === 2 ? 0.55 : 0);
+      this.colorPhase %= 1000; this.wavePhase %= 6283.185; this.breath %= 6283.185;
+      if (snap || this.colors.length !== palette.length) this.colors = palette.map(c => c.slice());
+      else { const k = 1 - Math.exp(-dt / 0.45); this.colors.forEach((c, i) => { for (let j = 0; j < 3; j++) c[j] += (palette[i][j] - c[j]) * k; }); }
+    }
+  }
+  const FRAG = `#version 300 es
+precision highp float;
+uniform vec4 geometry, appearance, options, motion, weights, c0, c1, c2, c3, extra;
+uniform float pxH;
+out vec4 outColor;
+float sdRoundRect(vec2 p, vec2 halfSize, float r) { vec2 q = abs(p) - halfSize + r; return length(max(q, 0.0)) + min(max(q.x, q.y), 0.0) - r; }
+float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+float ripple(float s, float wp) { return 0.5 * sin(s / 170.0 - wp * 1.9) + 0.3 * sin(s / 83.0 + wp * 1.3) + 0.2 * sin(s / 41.0 - wp * 2.7); }
+float bandG(float s, float per, float phase, int mode) {
+  float a = 6.2831853 * (s / per + phase);
+  if (mode == 3) return sin(a) + 0.12;
+  if (mode == 2) return sin(a) + 0.35;
+  return sin(2.0 * a) + 0.12;
+}
+float segment(float f, float start, float len) {
+  float dist = abs(fract(f - (start + len * 0.5) + 0.5) - 0.5);
+  return 1.0 - smoothstep(len * 0.5 - 0.045, len * 0.5 + 0.045, dist);
+}
+vec3 paletteAt(float f, int n) {
+  vec4 w = weights;
+  float a = segment(f, 0.0, w.x);
+  float b = segment(f, w.x, w.y);
+  float c = n > 2 ? segment(f, w.x + w.y, w.z) : 0.0;
+  float e = n > 3 ? segment(f, w.x + w.y + w.z, w.w) : 0.0;
+  vec3 sum = c0.rgb * a + c1.rgb * b + c2.rgb * c + c3.rgb * e;
+  return sum / max(a + b + c + e, 1e-4);
+}
+void main() {
+  vec2 position = vec2(gl_FragCoord.x, pxH - gl_FragCoord.y);   // top-left origin, like Metal
+  float W = geometry.x, H = geometry.y, scale = geometry.z, R = geometry.w;
+  vec2 p = position / scale;
+  vec2 c = p - vec2(W, H) * 0.5;
+  float d = -sdRoundRect(c, vec2(W, H) * 0.5, R);
+  float nw = options.z, nh = options.w;
+  float inNotch = 1.0;
+  if (nw > 0.0) {
+    float pad = 1.5;
+    float nr = extra.y > 0.5 ? extra.y : clamp(nh * 0.3, 8.0, 26.0);
+    vec2 nc = c - vec2(0.0, -H * 0.5 + nh * 0.5 - 6.0 + pad * 0.5);
+    vec2 nhalf = vec2(nw * 0.5 + pad, nh * 0.5 + 6.0 + pad * 0.5);
+    float dn = sdRoundRect(nc, nhalf, min(nr + pad, min(nhalf.x, nhalf.y)));
+    inNotch = smoothstep(-1.0, 0.0, dn);
+    float kf = 9.0;
+    float hf = max(kf - abs(d - dn), 0.0) / kf;
+    d = min(d, dn) - hf * hf * kf * 0.25;
+  }
+  if (d < -1.0 || inNotch <= 0.0) { outColor = vec4(0.0); return; }
+  d = max(d, 0.0);
+  int mode = int(options.x + 0.5);
+  int variant = int(extra.z + 0.5);
+  bool liquid = mode == 3 || (mode >= 1 && variant == 0);
+  float beat = appearance.z, energy = appearance.w;
+  float amount = mode == 1 ? 0.55 : mode == 2 ? 0.22 : mode == 3 ? 0.3 + beat * 0.25 : 0.0;
+  float T0 = appearance.x * (mode == 3 ? 1.0 + energy * 0.15 + beat * 0.2 : 1.0);
+  float G = appearance.y * (mode == 3 ? 1.0 + beat * 0.2 + energy * 0.1 : 1.0);
+  if (d > T0 * (1.0 + amount) * (liquid ? 3.2 : 1.0) + G * (liquid ? 6.0 : 4.0) + 2.0) { outColor = vec4(0.0); return; }
+  float per = 2.0 * (W + H);
+  vec4 ed = vec4(p.y, W - p.x, H - p.y, p.x);
+  vec4 es = vec4(p.x, W + p.y, W + H + (W - p.x), 2.0 * W + H + (H - p.y));
+  int e1 = 0;
+  if (ed.y < ed[e1]) e1 = 1;
+  if (ed.z < ed[e1]) e1 = 2;
+  if (ed.w < ed[e1]) e1 = 3;
+  float d1 = ed[e1], s1 = es[e1];
+  int ea = (e1 + 1) & 3, eb = (e1 + 3) & 3;
+  int e2 = ed[ea] < ed[eb] ? ea : eb;
+  float d2 = ed[e2], s2 = es[e2];
+  float k = clamp(max(appearance.y, 4.0) * 0.35, 3.0, 40.0);
+  float r = exp(-(d2 - d1) / k);
+  float w2 = r / (1.0 + r), w1 = 1.0 - w2;
+  float dSoft = max(0.0, d1 - k * log(1.0 + r));
+  int n = int(options.y + 0.5);
+  vec3 color = c0.rgb;
+  float phase = motion.x;
+  float sA1 = s1, sA2 = s2;
+  if (liquid) {
+    float th = atan(p.y - H * 0.5, p.x - W * 0.5), th0 = atan(-H * 0.5, -W * 0.5);
+    float sa = fract((th - th0) / 6.2831853) * per;
+    sA1 = sa; sA2 = sa;
+  }
+  if (n > 1) {
+    if (mode >= 1 && variant == 0) {
+      float c0a = liquid && n == 2 ? 0.45 : -0.1, c0b = liquid && n == 2 ? 0.75 : 0.8;
+      float ga = smoothstep(c0a, c0b, bandG(sA1, per, phase, mode)), gb = smoothstep(c0a, c0b, bandG(sA2, per, phase, mode));
+      vec3 ca = n > 2 ? mix(mix(c2.rgb, c1.rgb, smoothstep(0.0, 0.45, ga)), c0.rgb, smoothstep(0.45, 0.95, ga)) : mix(c1.rgb, c0.rgb, ga);
+      vec3 cb = n > 2 ? mix(mix(c2.rgb, c1.rgb, smoothstep(0.0, 0.45, gb)), c0.rgb, smoothstep(0.45, 0.95, gb)) : mix(c1.rgb, c0.rgb, gb);
+      color = ca * w1 + cb * w2;
+    } else {
+      vec3 ca = paletteAt(fract(s1 / per + (mode >= 1 ? phase : 0.0)), n);
+      vec3 cb = w2 > 0.004 ? paletteAt(fract(s2 / per + (mode >= 1 ? phase : 0.0)), n) : ca;
+      color = ca * w1 + cb * w2;
+    }
+  }
+  float wp = motion.y;
+  float wave = w1 * ripple(s1, wp) + (w2 > 0.004 ? w2 * ripple(s2, wp) : w2 * ripple(s1, wp));
+  float lit = 1.0;
+  float bandBright = -1.0;
+  if (mode >= 1) {
+    float kl = clamp(max(appearance.y, 4.0) * 1.1, 8.0, 140.0);
+    float rl = exp(-(d2 - d1) / kl);
+    float wl2 = rl / (1.0 + rl);
+    float bump = mode == 3 ? 0.06 * beat : (mode == 2 ? 0.2 : 0.0);
+    float e0 = liquid ? 0.15 : -0.25, e1b = liquid ? 0.85 : 0.3;
+    float gA = bandG(sA1, per, phase, mode) + bump, gB = bandG(sA2, per, phase, mode) + bump;
+    float bA = smoothstep(e0, e1b, gA), bB = smoothstep(e0, e1b, gB);
+    float cc = (1.0 - wl2) * bA + wl2 * bB;
+    bandBright = (1.0 - wl2) * smoothstep(-0.24, 0.04, gA) + wl2 * smoothstep(-0.24, 0.04, gB);
+    if (liquid) {
+      float la = 0.5 + 0.5 * sin(3.0 * 6.2831853 * (sA1 / per + phase) + 1.0);
+      float lb = 0.5 + 0.5 * sin(3.0 * 6.2831853 * (sA2 / per + phase) + 1.0);
+      cc *= 0.82 + 0.18 * ((1.0 - wl2) * la + wl2 * lb);
+    }
+    if (mode == 2 && !liquid) lit = mix(0.35, 1.0, cc); else lit = cc;
+  }
+  float shapeLit = lit;
+  if (liquid) lit = mix(0.4, 1.0, bandBright >= 0.0 ? bandBright : shapeLit) * mix(0.45, 1.0, shapeLit);
+  float T = liquid
+    ? max(0.75, T0 * (0.2 + 0.6 * max(bandBright, 0.0) + 2.0 * shapeLit) * (1.0 + (0.1 + 0.45 * shapeLit) * wave))
+    : max(0.75, T0 * (1.0 + amount * 0.12 * wave) * (0.4 + 0.85 * lit));
+  float Gl = G * (liquid ? (0.25 + 1.4 * pow(shapeLit, 1.2)) : (0.2 + 1.25 * pow(lit, 1.4)));
+  float aa = 0.8 / scale;
+  float core = 1.0 - smoothstep(T - aa, T + aa, d);
+  float hot = exp(-d / max(0.6, T * 0.45)) * core;
+  float x = max(0.0, min(d, dSoft) - T);
+  float halo = Gl > 0.3 ? (0.55 * exp(-x / (Gl * 0.45)) + 0.07 * exp(-x / (Gl * 1.4))) * (1.0 - smoothstep(Gl * 2.2, Gl * 4.0, x)) : 0.0;
+  float alpha = clamp(max(core, halo * (0.9 + 0.1 * core)), 0.0, 1.0) * lit;
+  float level = 1.0;
+  if (mode == 2) level = 0.78 + 0.22 * sin(motion.z);
+  if (mode == 3) level = 0.95 + beat * 0.05;
+  float boost = mix(1.0, motion.w, core * (mode == 3 ? 0.45 + beat * 0.3 : 0.55));
+  float centre = core * (1.0 - smoothstep(0.0, max(1.0, T * 0.85), d));
+  vec3 rgb = liquid
+    ? mix(color, vec3(1.0), (0.05 + 0.18 * shapeLit) * core + hot * 0.05) * boost * level
+    : mix(color, vec3(1.0), max(hot * 0.25, centre * 0.55) * (0.5 + 0.5 * lit)) * boost * level;
+  rgb += (hash(position) - 0.5) / 255.0;
+  float a = alpha * min(1.0, level) * extra.x * inNotch;
+  outColor = vec4(max(rgb, 0.0) * a, a);
+}`;
+  function makeLight(cv) {
+    const gl = cv.getContext("webgl2", { premultipliedAlpha: true, alpha: true, antialias: false, preserveDrawingBuffer: true });
+    if (!gl) return null;
+    const sh = (type, src) => { const o = gl.createShader(type); gl.shaderSource(o, src); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; };
+    const prog = gl.createProgram();
+    gl.attachShader(prog, sh(gl.VERTEX_SHADER, "#version 300 es\nvoid main(){vec2 p=gl_VertexID==0?vec2(-1,-1):gl_VertexID==1?vec2(3,-1):vec2(-1,3);gl_Position=vec4(p,0,1);}"));
+    gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+    const loc = {}; for (const n of ["geometry", "appearance", "options", "motion", "weights", "c0", "c1", "c2", "c3", "extra", "pxH"]) loc[n] = gl.getUniformLocation(prog, n);
+    gl.bindVertexArray(gl.createVertexArray());
+    return function draw(u) {
+      gl.viewport(0, 0, cv.width, cv.height);
+      gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.useProgram(prog);
+      for (const n in u) gl.uniform4fv(loc[n], u[n]);
+      gl.uniform1f(loc.pxH, cv.height);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    };
+  }
+  // Same packing as MetalEdgeView.uniforms(...).
+  function lightUniforms(a, mode, colors, opts) {
+    const n = colors.length, col = i => [...colors[Math.min(i, n - 1)], 1];
+    const music = mode === 3;
+    return {
+      geometry: [opts.W, opts.H, opts.scale, opts.corner],
+      appearance: [opts.thickness * (music ? 1 + 0.15 * a.drive : 1), opts.glow * (music ? 1 + 0.25 * a.drive : 1), a.beat, a.energy],
+      options: [mode, n, opts.notchW, opts.notchH],
+      motion: [a.colorPhase, a.wavePhase, a.breath, 1],
+      weights: weightsFor(n), c0: col(0), c1: col(1), c2: col(2), c3: col(3),
+      extra: [1, 0, 0, 0],
+    };
+  }
+  const lightCanvas = document.getElementById("light");
+  // The Mac screen is laid out in points (1512 x 982) and scaled to the demo's size.
+  new ResizeObserver(() => mac.style.setProperty("--pt", (canvas.getBoundingClientRect().width / LUNE.W).toFixed(5))).observe(canvas);
+  const clockEl = document.getElementById("mb-clock");
+  const tick = () => { const d = new Date(); clockEl.textContent = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }).replace(",", "") + "  " + d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }); };
+  tick(); setInterval(tick, 15000);
+  const ppEl = document.getElementById("pl-pp");
+  const PP = { play: ppEl.innerHTML, pause: ppEl.innerHTML.replace(/<path[^>]*>/, '<rect x="6.2" y="4.4" width="4.2" height="15.2" rx="1.2"/><rect x="13.6" y="4.4" width="4.2" height="15.2" rx="1.2"/>') };
+  let ppShown = "play";
+  function updatePulse(playing, sig) {
+    // Lune's player: pulse = energy * 0.55 + beat * 0.7 while Music Sync listens; a slow breath otherwise.
+    const pulse = !playing ? 0 : mode === "Music Sync" ? Math.min(1, sig.energy * 0.55 + sig.beat * 0.7) : 0.32 + 0.22 * Math.sin(performance.now() / 1000 * 1.9);
+    mac.style.setProperty("--pulse", pulse.toFixed(3));
+    mac.style.setProperty("--cover", playing ? (1 + 0.012 * pulse).toFixed(4) : "0.965");
+    const want = playing ? "pause" : "play";
+    if (want !== ppShown) { ppShown = want; ppEl.innerHTML = PP[want]; }
+  }
+  let drawLight = null;
+  try { drawLight = makeLight(lightCanvas); } catch (e) { console.warn("Lune light fell back to 2D:", e); }
+  if (!drawLight) lightCanvas.remove();
+  const anim = new GlowAnimator();
+  let animSnap = true;
+  // A simulated listen of Earrings: a locked tempo, a kick on every beat, and
+  // loud/quiet sections every 8 bars, like the live audio Lune hears.
+  function earringsSignal(t) {
+    const P = LUNE.earringsBeat, since = t % P, bar = Math.floor(t / (P * 32)) % 2;
+    return { beat: since < 0.11 ? 1 - since / 0.11 : 0, energy: 0.5 + 0.2 * Math.exp(-since / 0.15), section: bar ? 0.35 : -0.2,
+             tempo: { period: P, confidence: 1, beatTime: t - since } };
+  }
+  function renderLight(dt, t) {
+    if (!drawLight) return false;
+    const rect = lightCanvas.getBoundingClientRect();
+    const pw = Math.round(rect.width * dpr), ph = Math.round(rect.height * dpr);
+    if (pw < 2 || ph < 2) return true;
+    if (lightCanvas.width !== pw || lightCanvas.height !== ph) { lightCanvas.width = pw; lightCanvas.height = ph; }
+    const m = MODE_CODE[mode] ?? 1;
+    const src = (records[current].light || records[current].colors.map(hex).map(c => c.map(v => v / 255)));
+    const colors = src.slice(0, Math.min(LUNE.colorCount, src.length));
+    const sig = earringsSignal(t);
+    updatePulse(laptopEl.classList.contains("playing"), sig);
+    anim.step(dt, m, m === 3 ? sig.energy : 0, m === 3 ? sig.beat : 0, colors, animSnap, m === 3 ? sig.tempo : undefined, t, m === 3 ? sig.section : 0);
+    animSnap = false;
+    drawLight(lightUniforms(anim, m, anim.colors, { W: LUNE.W, H: LUNE.H, scale: pw / LUNE.W, corner: LUNE.corner, notchW: LUNE.notchW, notchH: LUNE.notchH, thickness: LUNE.thickness, glow: LUNE.glow }));
+    return true;
+  }
+  // For checking against the app: one frame like scripts/render-frame.sh.
+  window.__luneFrame = (w, h, thick, glow, r, g, b, seconds, modeName) => {
+    const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+    const draw = makeLight(cv), a = new GlowAnimator(), m = MODE_CODE[modeName || "Default"], col = [[r, g, b]];
+    a.step(0, m, 0, 0, col, true);
+    for (let tt = 0; tt < Math.fround(seconds); tt = Math.fround(tt + Math.fround(1 / 120))) a.step(1 / 120, m, 0, 0, col, false);   // Float32 clock, like the Swift renderer
+    draw(lightUniforms(a, m, a.colors, { W: w, H: h, scale: 1, corner: 11, notchW: 185, notchH: 32, thickness: 1 + thick * 17, glow: glow * 30 }));
+    const out = document.createElement("canvas"); out.width = w; out.height = h;
+    const o = out.getContext("2d"); o.fillStyle = "#000"; o.fillRect(0, 0, w, h); o.drawImage(cv, 0, 0);
+    return out.toDataURL("image/png");
+  };
 
   let flow = 0, colourPhase = 0, beat = 0;
   function drawRim(dt, t) {
@@ -812,21 +1210,51 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
   }
 
   // ---------- Loop ----------
-  let last = performance.now(), t0 = performance.now();
+  // The demo starts paused on a lit frame, like a video poster; the button plays it.
+  let last = performance.now(), playClock = 2.4;
+  const laptopEl = document.getElementById("laptop");
   function frame(now) {
-    const dt = Math.min(0.05, (now - last) / 1000); last = now;
-    for (let i = 0; i < palette.length; i++) palette[i] = mix(palette[i], target[i], Math.min(1, dt / 0.35));
+    const real = Math.min(0.05, (now - last) / 1000); last = now;
+    const playing = laptopEl.classList.contains("playing");
+    const dt = playing ? real : 0;
+    playClock += dt;
+    for (let i = 0; i < palette.length; i++) palette[i] = mix(palette[i], target[i], Math.min(1, real / 0.35));
     if (W > 0) {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = "#050407"; ctx.fillRect(0, 0, W, H);
-      const t = ((now - t0) / 1000) % loop;
+      const t = playClock % loop;
       // One bad frame must never stop the demo.
       try { drawLyrics(t); } catch (e) { console.warn(e); }
-      try { drawRim(dt, (now - t0) / 1000); } catch (e) { console.warn(e); }
+      try { if (!renderLight(dt, playClock)) drawRim(dt, playClock); } catch (e) { console.warn(e); }
     }
     requestAnimationFrame(frame);
   }
   resize(); requestAnimationFrame(frame);
+
+  // ---------- Play / pause pill ----------
+  const play = document.getElementById("play"), ico = document.getElementById("play-ico"), lab = document.getElementById("play-label");
+  const PLAY = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" style="margin-left:2px"><path d="M7 4.2 19.4 12 7 19.8Z"/></svg>';
+  const PAUSE = '<svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><rect x="6.6" y="4.6" width="3.9" height="14.8" rx="1.2"/><rect x="13.5" y="4.6" width="3.9" height="14.8" rx="1.2"/></svg>';
+  const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let swapping = Promise.resolve();
+  play.addEventListener("click", () => {
+    const on = laptopEl.classList.toggle("playing");
+    play.setAttribute("aria-label", on ? "Pause the demo" : "Play the demo");
+    swapping = swapping.then(async () => {
+      if (calm) { ico.innerHTML = on ? PAUSE : PLAY; lab.textContent = on ? "Pause" : "See it in action"; return; }
+      const from = play.offsetWidth;
+      await Promise.all([
+        ico.firstElementChild.animate([{ opacity: 1, transform: "scale(1)" }, { opacity: 0, transform: "scale(.6)" }], { duration: 160, fill: "forwards" }).finished,
+        lab.animate([{ opacity: 1, transform: "none" }, { opacity: 0, transform: "translateY(-4px)" }], { duration: 160, fill: "forwards" }).finished,
+      ]);
+      ico.innerHTML = on ? PAUSE : PLAY; lab.textContent = on ? "Pause" : "See it in action";
+      lab.getAnimations().forEach(a => a.cancel());
+      const to = play.offsetWidth;
+      play.animate([{ width: from + "px" }, { width: to + "px" }], { duration: 380, easing: "cubic-bezier(.22,1,.36,1)" });
+      ico.firstElementChild.animate([{ opacity: 0, transform: "scale(.6)" }, { opacity: 1, transform: "scale(1)" }], { duration: 160 });
+      lab.animate([{ opacity: 0, transform: "translateY(4px)" }, { opacity: 1, transform: "none" }], { duration: 160 });
+    });
+  });
 })();
 </script>
 <script>
@@ -877,6 +1305,33 @@ html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
   }
 
   if (!fine) return;
+
+  // ---------- Demo window tilt: up to 5deg sideways, 3.5deg up/down, springy ----------
+  const lap = document.getElementById("laptop");
+  if (lap) {
+    const T = { rx: 0, ry: 0, vrx: 0, vry: 0, trx: 0, try_: 0, s: 1, vs: 0, ts: 1 };
+    let traf = 0, tl = 0;
+    const tstep = now => {
+      let dt = Math.min(0.05, (now - tl) / 1000 || 1 / 60); tl = now;
+      while (dt > 0) {
+        const h = Math.min(dt, 1 / 240); dt -= h;
+        T.vrx += ((-140 * (T.rx - T.trx) - 18 * T.vrx) / 0.6) * h; T.rx += T.vrx * h;
+        T.vry += ((-140 * (T.ry - T.try_) - 18 * T.vry) / 0.6) * h; T.ry += T.vry * h;
+        T.vs += (-200 * (T.s - T.ts) - 24 * T.vs) * h; T.s += T.vs * h;
+      }
+      lap.style.transform = `perspective(1600px) rotateX(${T.rx.toFixed(3)}deg) rotateY(${T.ry.toFixed(3)}deg) scale(${T.s.toFixed(4)})`;
+      const still = Math.abs(T.rx - T.trx) + Math.abs(T.ry - T.try_) < 0.005 && Math.abs(T.s - T.ts) < 0.0002 && Math.abs(T.vrx) + Math.abs(T.vry) + Math.abs(T.vs) < 0.01;
+      traf = still ? 0 : requestAnimationFrame(tstep);
+    };
+    const tkick = () => { if (!traf) { tl = performance.now(); traf = requestAnimationFrame(tstep); } };
+    lap.addEventListener("pointermove", e => {
+      if (e.pointerType !== "mouse") return;
+      const r = lap.getBoundingClientRect();
+      const i = (e.clientX - r.left) / r.width - 0.5, a = (e.clientY - r.top) / r.height - 0.5;
+      T.try_ = 10 * i; T.trx = -7 * a; T.ts = 1.012; tkick();
+    });
+    lap.addEventListener("pointerleave", () => { T.trx = 0; T.try_ = 0; T.ts = 1; tkick(); });
+  }
 
   // ---------- Cursor: an 8px dot on a spring; grows over things you can click ----------
   const dot = document.createElement("div");
