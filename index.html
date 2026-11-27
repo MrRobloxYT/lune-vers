@@ -223,7 +223,27 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-event
 .dl:hover::after { right: -120px; opacity: .8; }
 @media (prefers-reduced-motion: reduce) { .rim, .rim::after, .hero h1 .sung, .lyricline .track-run, .record .x { animation: none !important; } }
 
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } }
+/* ---------- Motion: cursor dot, entrances, springy hovers ---------- */
+:root { --spring: cubic-bezier(.22,1,.36,1); --spring-pop: cubic-bezier(.34,1.4,.64,1); }
+html[data-cursor="dot"], html[data-cursor="dot"] * { cursor: none !important; }
+.cursor-dot { position: fixed; left: 0; top: 0; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: var(--ink); pointer-events: none; z-index: 300; will-change: transform; transition: background-color .25s cubic-bezier(.22,1,.36,1), opacity .2s; }
+.cursor-dot.inv { background: var(--night); }
+.cursor-dot.away { opacity: 0; }
+@keyframes rise { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise 1.1s cubic-bezier(.16,1,.3,1) backwards; }
+.reveal { opacity: 0; translate: 0 var(--ry, 18px); }
+.reveal.in { opacity: 1; translate: 0 0; transition: opacity .6s cubic-bezier(.22,1,.36,1), translate var(--rdur, .8s) var(--spring); transition-delay: var(--rdelay, 0s); }
+.btn { transition: border-color .3s, transform .45s var(--spring-pop); }
+.btn:hover { transform: translateY(-3px); }
+.btn:active { transform: translateY(-3px) scale(.94); transition-duration: .3s, .15s; }
+.bar nav a:not(.get) { position: relative; padding: 5px 10px; margin: 0 -10px; border-radius: 999px; transition: color .2s; }
+.bar nav a:not(.get)::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: color-mix(in srgb, var(--ink) 9%, transparent); transform: scaleY(0); transform-origin: 50% 100%; transition: transform .45s var(--spring); }
+.bar nav a:not(.get):hover::before { transform: scaleY(1); }
+.bar nav a.get, .liner a { display: inline-block; transition: transform .35s var(--spring-pop); }
+.bar nav a.get:hover, .liner a:hover { transform: translateY(-1px); }
+.bar nav a.get:active { transform: scale(.94); }
+
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; } .rise { animation: none; } }
 </style>
 </head>
 <body>
@@ -245,10 +265,10 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-event
 <main id="top">
   <section class="wrap hero" aria-labelledby="title">
     <div class="hero-head">
-      <h1 id="title"><span class="sung">Lune</span> <span class="amp">&amp;</span><br><span class="sung">Vers</span></h1>
+      <h1 id="title" class="rise" style="animation-delay:160ms"><span class="sung">Lune</span> <span class="amp">&amp;</span><br><span class="sung">Vers</span></h1>
       <div>
-        <p class="lede">Two free menu-bar apps for listening at night. <strong>Lune</strong> lights the edge of your screen in the colours of the album that’s playing. <strong>Vers</strong> lights the lyrics, one word at a time, the moment each word is sung. <em>Spotify or Apple Music. macOS 14 or later, or Windows 10 and 11.</em></p>
-        <div class="cta">
+        <p class="lede rise" style="animation-delay:260ms">Two free menu-bar apps for listening at night. <strong>Lune</strong> lights the edge of your screen in the colours of the album that’s playing. <strong>Vers</strong> lights the lyrics, one word at a time, the moment each word is sung. <em>Spotify or Apple Music. macOS 14 or later, or Windows 10 and 11.</em></p>
+        <div class="cta rise" style="animation-delay:360ms">
           <a class="btn primary" href="downloads/Lune-1.0.dmg" download>Get Lune <small>1.3 MB</small></a>
           <a class="btn" href="downloads/Vers-1.0.dmg" download>Get Vers <small>1.1 MB</small></a>
           <a class="btn" href="#download-windows">For Windows <small>10 &amp; 11</small></a>
@@ -256,7 +276,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-event
       </div>
     </div>
 
-    <div class="stage">
+    <div class="stage rise" style="animation-delay:520ms">
       <div class="laptop" id="laptop">
         <canvas id="screen" aria-label="Live demo of Lune's edge light and Vers's lyrics"></canvas>
         <div class="notch" aria-hidden="true"></div>
@@ -271,7 +291,7 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-event
     </div>
   </section>
 
-  <div class="lyricline" aria-hidden="true"><div class="track-run" id="lyricrun"></div></div>
+  <div class="lyricline rise" style="animation-delay:640ms" aria-hidden="true"><div class="track-run" id="lyricrun"></div></div>
 
   <section class="wrap records" aria-labelledby="rec-title">
     <div>
@@ -807,6 +827,125 @@ body::after { content: ""; position: fixed; inset: 0; z-index: 39; pointer-event
     requestAnimationFrame(frame);
   }
   resize(); requestAnimationFrame(frame);
+})();
+</script>
+<script>
+// Motion: springy cursor dot, scroll reveals and smoothed wheel scrolling.
+(() => {
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reduced) return;
+  const fine = matchMedia("(pointer: fine)").matches;
+
+  // Spring curves as CSS linear() easings, so hovers and reveals settle like springs.
+  function springEase(k, c, m) {
+    let x = 0, v = 0, t = 0; const dt = 1 / 240, pts = [0];
+    while (t < 3) {
+      for (let i = 0; i < 4; i++) { const a = (-k * (x - 1) - c * v) / m; v += a * dt; x += v * dt; t += dt; }
+      pts.push(+x.toFixed(4));
+      if (Math.abs(1 - x) < 0.001 && Math.abs(v) < 0.01) break;
+    }
+    pts[pts.length - 1] = 1;
+    return { dur: t, ease: `linear(${pts.join(",")})` };
+  }
+  if (CSS.supports("transition-timing-function", "linear(0, 1)")) {
+    const reveal = springEase(220, 28, 1), pop = springEase(300, 24, 1), soft = springEase(300, 30, 1);
+    const r = document.documentElement.style;
+    r.setProperty("--spring", soft.ease); r.setProperty("--spring-pop", pop.ease);
+    r.setProperty("--rdur", reveal.dur.toFixed(2) + "s");
+    document.head.insertAdjacentHTML("beforeend", `<style>.reveal.in{transition-timing-function:ease-out,${reveal.ease}}</style>`);
+  }
+
+  // ---------- Reveals: sections spring up as they come into view ----------
+  const groups = [
+    [".records > div:first-child", 22], [".crate", 18], [".side-head", 22], [".track", 16],
+    [".together > div:first-child", 22], [".layer", 18], [".install > h2", 22], [".steps > li", 18],
+    [".downloads > h2", 22], ["#download-windows", 18], [".dl", 18], [".faq > h2", 22], [".faq details", 16], [".liner", 18],
+  ];
+  const io = new IntersectionObserver(entries => {
+    let n = 0;
+    for (const e of entries) {
+      if (!e.isIntersecting) continue;
+      const enough = e.intersectionRatio >= 0.5 || e.intersectionRect.height >= innerHeight * 0.5;
+      if (!enough) continue;
+      e.target.style.setProperty("--rdelay", (n++ * 0.07).toFixed(2) + "s");
+      e.target.classList.add("in");
+      io.unobserve(e.target);
+    }
+  }, { threshold: [0, 0.25, 0.5, 0.75, 1] });
+  for (const [sel, y] of groups) for (const el of document.querySelectorAll(sel)) {
+    el.classList.add("reveal"); el.style.setProperty("--ry", y + "px"); io.observe(el);
+  }
+
+  if (!fine) return;
+
+  // ---------- Cursor: an 8px dot on a spring; grows over things you can click ----------
+  const dot = document.createElement("div");
+  dot.className = "cursor-dot away"; dot.setAttribute("aria-hidden", "true");
+  document.body.appendChild(dot);
+  document.documentElement.dataset.cursor = "dot";
+  const HOT = "a, button, summary, [data-cursor-hot]";
+  const INV = ".btn.primary, .bar nav a.get, .chip[aria-pressed='true'], [data-cursor-invert]";
+  const P = { x: -100, y: -100, vx: 0, vy: 0, tx: -100, ty: -100, s: 1, vs: 0, ts: 1 };
+  let raf = 0, last = 0, seen = false;
+  function step(now) {
+    let dt = Math.min(0.05, (now - last) / 1000 || 1 / 60); last = now;
+    while (dt > 0) {
+      const h = Math.min(dt, 1 / 240); dt -= h;
+      // position: stiffness 420, damping 32, mass 0.5 — scale: stiffness 300, damping 24
+      P.vx += ((-420 * (P.x - P.tx) - 32 * P.vx) / 0.5) * h; P.x += P.vx * h;
+      P.vy += ((-420 * (P.y - P.ty) - 32 * P.vy) / 0.5) * h; P.y += P.vy * h;
+      P.vs += (-300 * (P.s - P.ts) - 24 * P.vs) * h; P.s += P.vs * h;
+    }
+    dot.style.transform = `translate3d(${P.x}px, ${P.y}px, 0) scale(${P.s})`;
+    const still = Math.abs(P.x - P.tx) < 0.05 && Math.abs(P.y - P.ty) < 0.05 && Math.abs(P.s - P.ts) < 0.001 && Math.abs(P.vx) + Math.abs(P.vy) + Math.abs(P.vs) < 0.05;
+    raf = still ? 0 : requestAnimationFrame(step);
+  }
+  function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(step); } }
+  addEventListener("pointermove", e => {
+    if (e.pointerType && e.pointerType !== "mouse") return;
+    P.tx = e.clientX; P.ty = e.clientY;
+    if (!seen) { seen = true; P.x = P.tx; P.y = P.ty; }
+    const t = e.target instanceof Element ? e.target : null;
+    P.ts = t && t.closest(HOT) ? 2.4 : 1;
+    dot.classList.toggle("inv", !!(t && t.closest(INV)));
+    dot.classList.remove("away");
+    kick();
+  }, { passive: true });
+  document.documentElement.addEventListener("mouseleave", () => dot.classList.add("away"));
+
+  // ---------- Smooth wheel scrolling (eases toward the target each frame) ----------
+  let goal = scrollY, cur = scrollY, sraf = 0, sLast = 0;
+  const instant = y => window.scrollTo({ top: y, behavior: "instant" });
+  function scrollStep(now) {
+    const dt = Math.min(0.05, (now - sLast) / 1000 || 1 / 60); sLast = now;
+    cur += (goal - cur) * (1 - Math.exp(-8 * dt));
+    if (Math.abs(goal - cur) < 0.5) { cur = goal; instant(cur); sraf = 0; return; }
+    instant(cur); sraf = requestAnimationFrame(scrollStep);
+  }
+  function innerScrolls(el, dy) {
+    for (let n = el instanceof Element ? el : null; n && n !== document.body && n !== document.documentElement; n = n.parentElement) {
+      const oy = getComputedStyle(n).overflowY;
+      if ((oy === "auto" || oy === "scroll") && n.scrollHeight > n.clientHeight) {
+        const top = n.scrollTop <= 0, bottom = n.scrollTop + n.clientHeight >= n.scrollHeight - 1;
+        if ((dy < 0 && !top) || (dy > 0 && !bottom)) return true;
+      }
+    }
+    return false;
+  }
+  addEventListener("wheel", e => {
+    if (e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    const dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaMode === 2 ? e.deltaY * innerHeight : e.deltaY;
+    if (innerScrolls(e.target, dy)) return;
+    e.preventDefault();
+    if (!sraf) goal = cur = scrollY;
+    goal = Math.max(0, Math.min(document.documentElement.scrollHeight - innerHeight, goal + dy));
+    if (!sraf) { sLast = performance.now(); sraf = requestAnimationFrame(scrollStep); }
+  }, { passive: false });
+  addEventListener("scroll", () => {
+    if (sraf && Math.abs(scrollY - cur) <= 2) return;
+    if (sraf) { cancelAnimationFrame(sraf); sraf = 0; }
+    goal = cur = scrollY;
+  }, { passive: true });
 })();
 </script>
 </body>
